@@ -1,5 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
+from django.db import models
+
 
 class UserManager(BaseUserManager):
     def create_user(self, phone, date_of_birth, email=None, password=None):
@@ -44,8 +45,12 @@ class BaseUser(AbstractUser, PermissionsMixin):  # Ensure PermissionsMixin is in
 
 
 class Member(models.Model):
-    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='member')  # Use CustomUser
-    position_in_party = models.CharField(max_length=100, null=True, blank=True)  # e.g., "Party Leader", "Treasurer"
+    user = models.OneToOneField(
+        BaseUser, on_delete=models.CASCADE, related_name="member"
+    )  # Use CustomUser
+    position_in_party = models.CharField(
+        max_length=100, null=True, blank=True
+    )  # e.g., "Party Leader", "Treasurer"
     region = models.CharField(max_length=100, null=True, blank=True)
     joined_on = models.DateField(auto_now_add=True)
     verified_member = models.BooleanField(default=False)
@@ -55,18 +60,20 @@ class Member(models.Model):
 
 
 class Candidate(models.Model):
-    user = models.OneToOneField(BaseUser, on_delete=models.CASCADE, related_name='candidate')  # Use CustomUser
+    user = models.OneToOneField(
+        BaseUser, on_delete=models.CASCADE, related_name="candidate"
+    )  # Use CustomUser
     constituency = models.CharField(max_length=100)
     party_affiliation = models.CharField(max_length=100, null=True, blank=True)
     election_status = models.CharField(
         max_length=50,
         choices=[
-            ('nominated', 'Nominated'),
-            ('in_campaign', 'In Campaign'),
-            ('elected', 'Elected'),
-            ('not_elected', 'Not Elected')
+            ("nominated", "Nominated"),
+            ("in_campaign", "In Campaign"),
+            ("elected", "Elected"),
+            ("not_elected", "Not Elected"),
         ],
-        default='nominated'
+        default="nominated",
     )
 
     def __str__(self):

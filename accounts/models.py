@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
@@ -75,3 +76,13 @@ class Candidate(models.Model):
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - Candidate for {self.constituency}"
+
+
+class OTP(models.Model):
+    phone_number = models.CharField(max_length=15, unique=True)
+    otp_code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_valid(self):
+        # Consider OTP valid for 5 minutes
+        return timezone.now() <= self.created_at + timezone.timedelta(minutes=5)

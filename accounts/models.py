@@ -47,11 +47,19 @@ class Member(models.Model):
     position_in_party = models.CharField(
         max_length=100, null=True, blank=True
     )  # e.g., "Party Leader", "Treasurer"
-    region = models.CharField(max_length=100, null=True, blank=True)
     joined_on = models.DateField(auto_now_add=True)
     verified_member = models.BooleanField(default=False)
     Nic = models.CharField(max_length=50, unique=True, null=True)
     phone = models.CharField(max_length=15, unique=True)
+    gender = models.CharField(
+        max_length=10,
+        choices=[("male", "Male"), ("female", "Female"), ("other", "Other")],
+        null=True,
+        blank=True,
+    )
+    district = models.CharField(max_length=100, null=True, blank=True)
+    constituency = models.CharField(max_length=100, null=True, blank=True)
+    image = models.ImageField(upload_to="member_images/", null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.position_in_party or 'Member'}"
@@ -61,7 +69,9 @@ class Candidate(models.Model):
     member = models.OneToOneField(
         Member, on_delete=models.CASCADE, related_name="candidate"
     )
-    constituency = models.CharField(max_length=100)
+    constituency = models.CharField(
+        max_length=100
+    )  # the constituency in which the candidate is running in
     party_affiliation = models.CharField(max_length=100, null=True, blank=True)
     election_status = models.CharField(
         max_length=50,

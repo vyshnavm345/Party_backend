@@ -42,6 +42,10 @@ def member_data(user_data, valid_phone_number):
         "region": "North",
         "Nic": "123456789",
         "phone": valid_phone_number,
+        "gender": "male",
+        "district": "District A",
+        "constituency": "Constituency 1",
+        "image": None,
     }
 
 
@@ -99,10 +103,16 @@ class TestMemberRegistration:
         assert response.status_code == status.HTTP_201_CREATED
         assert "user" in response.data
         assert response.data["phone"] == member_data["phone"]
+        assert response.data["gender"] == member_data["gender"]
+        assert response.data["district"] == member_data["district"]
+        assert response.data["constituency"] == member_data["constituency"]
 
         member = Member.objects.get(phone=member_data["phone"])
         assert member is not None
         assert member.user.email == member_data["user"]["email"]
+        assert member.gender == member_data["gender"]
+        assert member.district == member_data["district"]
+        assert member.constituency == member_data["constituency"]
 
     def test_member_registration_existing_phone(self, client, member_data):
         url = reverse("register")
@@ -111,4 +121,4 @@ class TestMemberRegistration:
         response = client.post(url, member_data, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        # assert response.data["detail"] == "Phone number already exists."
+        # assert response.data["detail"] == "Phone number already exists."  # Uncomment and update if necessary

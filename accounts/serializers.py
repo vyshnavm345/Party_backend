@@ -29,7 +29,16 @@ class MemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Member
-        fields = ["user", "position_in_party", "region", "Nic", "phone"]
+        fields = [
+            "user",
+            "position_in_party",
+            "Nic",
+            "phone",
+            "gender",
+            "district",
+            "constituency",
+            "image",
+        ]
 
     def create(self, validated_data):
         user_data = validated_data.pop("user")

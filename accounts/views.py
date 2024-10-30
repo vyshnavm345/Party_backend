@@ -12,7 +12,7 @@ from .serializers import (
     OTPSendSerializer,
     OTPVerifySerializer,
 )
-from .utils import nest_member_data
+from .utils import nest_member_data, validate_nic
 
 
 class OTPSendView(generics.GenericAPIView):
@@ -68,13 +68,14 @@ class OTPVerifyView(generics.GenericAPIView):
                         **flat_serializer.data,  # Include the serialized flattened data
                         "refresh": str(refresh),
                         "access": str(refresh.access_token),
+                        "existing_user": True,
                     },
                     status=status.HTTP_200_OK,
                 )
             except Member.DoesNotExist:
                 # If member does not exist, proceed with registration
                 return Response(
-                    {"detail": "OTP verified. Proceed to register."},
+                    {"existing_user": False},
                     status=status.HTTP_200_OK,
                 )
         else:
@@ -89,6 +90,16 @@ class MemberRegistrationView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         request_data = request.data.copy()
+        print(request_data)
+        nic_valid, message = validate_nic(request_data)
+        if not nic_valid:
+            return Response(
+                {
+                    "detail": "Invalid NIC",
+                    "reason": message,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Use the helper function to nest data
         nested_data = nest_member_data(request_data)

@@ -40,10 +40,10 @@ def member_data(user_data, valid_phone_number):
         "first_name": "John",
         "last_name": "Doe",
         "email": "john.doe@example.com",
-        "date_of_birth": "1990-01-01",
+        "date_of_birth": "1998-02-02",
         "password": "password123",
         "position_in_party": "Party Leader",
-        "Nic": "123456789",
+        "Nic": "980330330V",
         "phone": valid_phone_number,
         "gender": "male",
         "district": "District A",
@@ -70,7 +70,7 @@ class TestOTPViews:
         )
 
         assert response.status_code == status.HTTP_200_OK
-        assert "detail" in response.data
+        assert "existing_user" in response.data
 
     def test_verify_otp_invalid(self, client, valid_phone_number):
         OTP.objects.create(phone_number="3698521470", otp_code="111111")
@@ -135,3 +135,36 @@ class TestMemberRegistration:
 
         # Check for duplicate phone number error
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_member_registration_invalid_nic(self, client, member_data):
+        url = reverse("register")
+
+        # Test with an invalid NIC
+        invalid_nics = [
+            "12345678",  # Too short
+            "12345678901",  # Too long
+            "1234567a89",  # Invalid characters
+            "123456789v",  # Invalid ending
+            "987654321",  # Valid length but invalid for your case
+        ]
+
+        for nic in invalid_nics:
+            member_data["Nic"] = nic
+            response = client.post(url, member_data, format="json")
+            assert response.status_code == status.HTTP_400_BAD_REQUEST
+            assert response.data["detail"] == "Invalid NIC"
+
+    def test_member_registration_nic_dob_gender_mismatch(self, client, member_data):
+        url = reverse("register")
+
+        # Test with a valid NIC but incorrect DOB and gender
+        member_data["Nic"] = "123456789"  # Set a NIC that you know is valid
+        member_data["date_of_birth"] = "2000-01-01"  # DOB does not match NIC info
+        member_data["gender"] = "female"  # Gender does not match NIC info
+
+        response = client.post(url, member_data, format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert (
+            response.data["reason"] == "Date of birth does not match NIC"
+            or response.data["reason"] == "Gender does not match NIC information"
+        )

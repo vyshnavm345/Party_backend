@@ -37,9 +37,12 @@ def user_data():
 @pytest.fixture
 def member_data(user_data, valid_phone_number):
     return {
-        "user": user_data,
+        "first_name": "John",
+        "last_name": "Doe",
+        "email": "john.doe@example.com",
+        "date_of_birth": "1990-01-01",
+        "password": "password123",
         "position_in_party": "Party Leader",
-        "region": "North",
         "Nic": "123456789",
         "phone": valid_phone_number,
         "gender": "male",
@@ -101,28 +104,34 @@ class TestMemberRegistration:
 
         response = client.post(url, member_data, format="json")
 
+        # Check for a successful registration
         assert response.status_code == status.HTTP_201_CREATED
-        assert "user" in response.data
+
+        # Check for fields in the flattened response structure
+        assert "first_name" in response.data
+        assert "last_name" in response.data
         assert response.data["phone"] == member_data["phone"]
         assert response.data["gender"] == member_data["gender"]
         assert response.data["district"] == member_data["district"]
         assert response.data["constituency"] == member_data["constituency"]
 
+        # Check that a member was created with the expected data
         member = Member.objects.get(phone=member_data["phone"])
         assert member is not None
-        assert member.user.email == member_data["user"]["email"]
+        assert member.user.email == member_data["email"]
         assert member.gender == member_data["gender"]
         assert member.district == member_data["district"]
         assert member.constituency == member_data["constituency"]
 
     def test_member_registration_existing_phone(self, client, member_data):
         url = reverse("register")
+
+        # Register the member first time
         client.post(url, member_data, format="json")
 
-        # Modify member_data to have a different email
-        member_data["user"]["email"] = "new_email@example.com"
-
+        # Modify member_data to have a different email and try registering again
+        member_data["email"] = "new_email@example.com"
         response = client.post(url, member_data, format="json")
 
+        # Check for duplicate phone number error
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        # assert response.data["detail"] == "Phone number already exists."

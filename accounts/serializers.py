@@ -47,6 +47,30 @@ class MemberSerializer(serializers.ModelSerializer):
         return member
 
 
+class FlatMemberSerializer(serializers.ModelSerializer):
+    # Define fields as properties to be fetched from the related user
+    first_name = serializers.CharField(source="user.first_name", read_only=True)
+    last_name = serializers.CharField(source="user.last_name", read_only=True)
+    email = serializers.EmailField(source="user.email", read_only=True)
+    date_of_birth = serializers.EmailField(source="user.date_of_birth", read_only=True)
+
+    class Meta:
+        model = Member
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "date_of_birth",
+            "position_in_party",
+            "Nic",
+            "phone",
+            "gender",
+            "district",
+            "constituency",
+            "image",
+        ]
+
+
 # class CandidateSerializer(serializers.ModelSerializer):
 #     member = MemberSerializer(read_only=True)  # Nested member serializer
 

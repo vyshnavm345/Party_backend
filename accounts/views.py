@@ -6,7 +6,13 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import OTP, Member
-from .serializers import MemberSerializer, OTPSendSerializer, OTPVerifySerializer
+from .serializers import (
+    FlatMemberSerializer,
+    MemberSerializer,
+    OTPSendSerializer,
+    OTPVerifySerializer,
+)
+from .utils import nest_member_data
 
 
 class OTPSendView(generics.GenericAPIView):
@@ -52,14 +58,14 @@ class OTPVerifyView(generics.GenericAPIView):
             try:
                 otp.delete()
                 member = Member.objects.get(phone=phone_number)
-                if member:
-                    print(member)
-                serializer = MemberSerializer(member)
+
+                # Use the FlatMemberSerializer to serialize the member data
+                flat_serializer = FlatMemberSerializer(member)
 
                 refresh = RefreshToken.for_user(member)
                 return Response(
                     {
-                        "detail": serializer.data,
+                        **flat_serializer.data,  # Include the serialized flattened data
                         "refresh": str(refresh),
                         "access": str(refresh.access_token),
                     },
@@ -82,9 +88,26 @@ class MemberRegistrationView(generics.CreateAPIView):
     serializer_class = MemberSerializer
 
     def post(self, request, *args, **kwargs):
-        # This view will be called after OTP verification
-        # member = Member.objects.create(*args, **kwargs)
-        return super().post(request, *args, **kwargs)
+        request_data = request.data.copy()
+
+        # Use the helper function to nest data
+        nested_data = nest_member_data(request_data)
+
+        # Pass the nested data to the serializer for validation and creation
+        serializer = self.get_serializer(data=nested_data)
+        serializer.is_valid(raise_exception=True)
+        member = serializer.save()  # Save the member instance
+        flat_serializer = FlatMemberSerializer(member)
+        refresh = RefreshToken.for_user(member)
+
+        return Response(
+            {
+                **flat_serializer.data,
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class MembersListView(generics.ListAPIView):

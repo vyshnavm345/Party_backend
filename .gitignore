@@ -73,7 +73,7 @@ cover/
 
 # Django stuff:
 document.py
-
+Read.md
 # Flask stuff:
 instance/
 .webassets-cache

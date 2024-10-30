@@ -144,3 +144,9 @@ WAGTAILDOCS_EXTENSIONS = [
 ]
 
 AUTH_USER_MODEL = "accounts.BaseUser"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}

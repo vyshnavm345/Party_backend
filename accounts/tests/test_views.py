@@ -98,6 +98,7 @@ class TestOTPViews:
 class TestMemberRegistration:
     def test_member_registration(self, client, member_data):
         url = reverse("register")
+
         response = client.post(url, member_data, format="json")
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -118,7 +119,10 @@ class TestMemberRegistration:
         url = reverse("register")
         client.post(url, member_data, format="json")
 
+        # Modify member_data to have a different email
+        member_data["user"]["email"] = "new_email@example.com"
+
         response = client.post(url, member_data, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        # assert response.data["detail"] == "Phone number already exists."  # Uncomment and update if necessary
+        # assert response.data["detail"] == "Phone number already exists."

@@ -1,7 +1,9 @@
 import random
 
 from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import OTP, Member
 from .serializers import MemberSerializer, OTPSendSerializer, OTPVerifySerializer
@@ -48,9 +50,21 @@ class OTPVerifyView(generics.GenericAPIView):
         if otp.is_valid() and otp.otp_code == otp_code:
             # if the user is new proceed to register otherwise create a token and send the user data back
             try:
+                otp.delete()
                 member = Member.objects.get(phone=phone_number)
+                if member:
+                    print(member)
                 serializer = MemberSerializer(member)
-                return Response({"detail": serializer.data}, status=status.HTTP_200_OK)
+
+                refresh = RefreshToken.for_user(member)
+                return Response(
+                    {
+                        "detail": serializer.data,
+                        "refresh": str(refresh),
+                        "access": str(refresh.access_token),
+                    },
+                    status=status.HTTP_200_OK,
+                )
             except Member.DoesNotExist:
                 # If member does not exist, proceed with registration
                 return Response(
@@ -69,4 +83,11 @@ class MemberRegistrationView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         # This view will be called after OTP verification
+        # member = Member.objects.create(*args, **kwargs)
         return super().post(request, *args, **kwargs)
+
+
+class MembersListView(generics.ListAPIView):
+    queryset = Member.objects.all()
+    serializer_class = MemberSerializer
+    permission_classes = [IsAuthenticated]

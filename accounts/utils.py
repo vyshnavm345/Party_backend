@@ -25,22 +25,42 @@ def send_otp_via_textlk(phone_number, otp):
         return None
 
 
+# def nest_member_data(request_data, request_files):
+#     print("The file returned inside the nested function : ",request_files.get("image"))
+#     return {
+#         "user": {
+#             "first_name": request_data["first_name"],
+#             "last_name": request_data["last_name"],
+#             "email": request_data["email"],
+#             "date_of_birth": request_data["date_of_birth"],
+#             "password": request_data.get("password"),
+#         },
+#         "position_in_party": request_data["position_in_party"],
+#         "Nic": request_data["Nic"],
+#         "phone": request_data["phone"],
+#         "gender": request_data["gender"],
+#         "district": request_data["district"],
+#         "constituency": request_data["constituency"],
+#         "image": request_files.get("image"),  # Access image from request_files
+#     }
+
+
 def nest_member_data(request_data, request_files):
     return {
         "user": {
-            "first_name": request_data["first_name"],
-            "last_name": request_data["last_name"],
-            "email": request_data["email"],
-            "date_of_birth": request_data["date_of_birth"],
+            "first_name": request_data.get("first_name"),
+            "last_name": request_data.get("last_name"),
+            "email": request_data.get("email"),
+            "date_of_birth": request_data.get("date_of_birth"),
             "password": request_data.get("password"),
         },
-        "position_in_party": request_data["position_in_party"],
-        "Nic": request_data["Nic"],
-        "phone": request_data["phone"],
-        "gender": request_data["gender"],
-        "district": request_data["district"],
-        "constituency": request_data["constituency"],
-        "image": request_files.get("image"),  # Access image from request_files
+        "position_in_party": request_data.get("position_in_party"),  # Using .get() here
+        "Nic": request_data.get("Nic"),
+        "phone": request_data.get("phone"),
+        "gender": request_data.get("gender"),
+        "district": request_data.get("district"),
+        "constituency": request_data.get("constituency"),
+        "image": request_files.get("image"),  # This will remain the same
     }
 
 

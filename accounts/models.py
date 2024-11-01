@@ -66,11 +66,13 @@ class Member(models.Model):
 
 
 class Candidate(models.Model):
-    user = models.OneToOneField(
-        BaseUser, on_delete=models.CASCADE, related_name="candidate"
-    )
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    age = models.PositiveIntegerField()
     constituency = models.CharField(max_length=100)
-    party_affiliation = models.CharField(max_length=100, null=True, blank=True)
+    party = models.CharField(max_length=100, null=True, blank=True)
+    district = models.CharField(max_length=100, null=True, blank=True)
+    image = models.ImageField(upload_to="candidate_images/", null=True, blank=True)
     election_status = models.CharField(
         max_length=50,
         choices=[

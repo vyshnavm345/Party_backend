@@ -62,6 +62,26 @@ def flatten_member_data(member):
     }
 
 
+def flatten_candidate_data(request_data):
+    """Flatten candidate data for processing."""
+    return {
+        "user": {
+            "first_name": request_data["first_name"],
+            "last_name": request_data["last_name"],
+            "email": request_data["email"],
+            "password": request_data.get("password"),
+        },
+        "constituency": request_data["constituency"],
+        "age": request_data["age"],
+        "party": request_data.get("party"),
+        "district": request_data.get("district"),
+        "image": request_data.get("image"),
+        "election_status": request_data.get(
+            "election_status", "nominated"
+        ),  # Default status
+    }
+
+
 class MD:
     def __init__(self, month="", day=0):
         self.month = month

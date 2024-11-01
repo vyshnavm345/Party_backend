@@ -1,8 +1,6 @@
-# serializers.py
-
 from rest_framework import serializers
 
-from .models import BaseUser, Member
+from .models import BaseUser, Candidate, Member
 
 
 class OTPSendSerializer(serializers.Serializer):
@@ -71,15 +69,33 @@ class FlatMemberSerializer(serializers.ModelSerializer):
         ]
 
 
-# class CandidateSerializer(serializers.ModelSerializer):
-#     member = MemberSerializer(read_only=True)  # Nested member serializer
+class CandidateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Candidate
+        fields = [
+            "first_name",
+            "last_name",
+            "constituency",
+            "age",
+            "party",
+            "district",
+            "image",
+            "election_status",
+        ]
 
-#     class Meta:
-#         model = Candidate
-#         fields = ['id', 'member', 'constituency', 'party_affiliation', 'election_status']
+    def create(self, validated_data):
+        candidate = Candidate.objects.create(**validated_data)
+        return candidate
 
-#     def create(self, validated_data):
-#         member_data = validated_data.pop('member')
-#         member = Member.objects.create(**member_data)
-#         candidate = Candidate.objects.create(member=member, **validated_data)
-#         return candidate
+    # def update(self, instance, validated_data):
+
+    #     # Update candidate fields
+    #     instance.constituency = validated_data.get('constituency', instance.constituency)
+    #     instance.age = validated_data.get('age', instance.age)
+    #     instance.party = validated_data.get('party', instance.party)
+    #     instance.district = validated_data.get('district', instance.district)
+    #     instance.image = validated_data.get('image', instance.image)
+    #     instance.election_status = validated_data.get('election_status', instance.election_status)
+
+    #     instance.save()
+    #     return instance

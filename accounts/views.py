@@ -1,12 +1,13 @@
 import random
 
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import OTP, Member
+from .models import OTP, Candidate, Member
 from .serializers import (
+    CandidateSerializer,
     FlatMemberSerializer,
     MemberSerializer,
     OTPSendSerializer,
@@ -86,42 +87,6 @@ class OTPVerifyView(generics.GenericAPIView):
             )
 
 
-# class MemberRegistrationView(generics.CreateAPIView):
-#     serializer_class = MemberSerializer
-
-#     def post(self, request, *args, **kwargs):
-#         request_data = request.data.copy()
-#         print(request_data)
-#         nic_valid, message = validate_nic(request_data)
-#         if not nic_valid:
-#             return Response(
-#                 {
-#                     "detail": "Invalid NIC",
-#                     "reason": message,
-#                 },
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-
-#         # Use the helper function to nest data
-#         nested_data = nest_member_data(request_data)
-
-#         # Pass the nested data to the serializer for validation and creation
-#         serializer = self.get_serializer(data=nested_data)
-#         serializer.is_valid(raise_exception=True)
-#         member = serializer.save()  # Save the member instance
-#         flat_serializer = FlatMemberSerializer(member)
-#         refresh = RefreshToken.for_user(member)
-
-#         return Response(
-#             {
-#                 **flat_serializer.data,
-#                 "refresh": str(refresh),
-#                 "access": str(refresh.access_token),
-#             },
-#             status=status.HTTP_201_CREATED,
-#         )
-
-
 class NICVerificationView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         request_data = request.data.copy()
@@ -171,7 +136,19 @@ class MemberRegistrationView(generics.CreateAPIView):
         )
 
 
+class CandidateListCreateView(generics.ListCreateAPIView):
+    queryset = Candidate.objects.all()
+    serializer_class = CandidateSerializer
+    permission_classes = [AllowAny]
+
+
+class CandidateDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Candidate.objects.all()
+    serializer_class = CandidateSerializer
+    permission_classes = [AllowAny]
+
+
 class MembersListView(generics.ListAPIView):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]

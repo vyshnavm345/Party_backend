@@ -85,12 +85,49 @@ class OTPVerifyView(generics.GenericAPIView):
             )
 
 
-class MemberRegistrationView(generics.CreateAPIView):
-    serializer_class = MemberSerializer
+# class MemberRegistrationView(generics.CreateAPIView):
+#     serializer_class = MemberSerializer
 
+#     def post(self, request, *args, **kwargs):
+#         request_data = request.data.copy()
+#         print(request_data)
+#         nic_valid, message = validate_nic(request_data)
+#         if not nic_valid:
+#             return Response(
+#                 {
+#                     "detail": "Invalid NIC",
+#                     "reason": message,
+#                 },
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+
+#         # Use the helper function to nest data
+#         nested_data = nest_member_data(request_data)
+
+#         # Pass the nested data to the serializer for validation and creation
+#         serializer = self.get_serializer(data=nested_data)
+#         serializer.is_valid(raise_exception=True)
+#         member = serializer.save()  # Save the member instance
+#         flat_serializer = FlatMemberSerializer(member)
+#         refresh = RefreshToken.for_user(member)
+
+#         return Response(
+#             {
+#                 **flat_serializer.data,
+#                 "refresh": str(refresh),
+#                 "access": str(refresh.access_token),
+#             },
+#             status=status.HTTP_201_CREATED,
+#         )
+
+
+
+class NICVerificationView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         request_data = request.data.copy()
         print(request_data)
+
+        # Perform NIC validation
         nic_valid, message = validate_nic(request_data)
         if not nic_valid:
             return Response(
@@ -100,6 +137,19 @@ class MemberRegistrationView(generics.CreateAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        return Response(
+            {"detail": "NIC is valid."},
+            status=status.HTTP_200_OK,
+        )
+
+
+class MemberRegistrationView(generics.CreateAPIView):
+    serializer_class = MemberSerializer
+
+    def post(self, request, *args, **kwargs):
+        request_data = request.data.copy()
+        print(request_data)
 
         # Use the helper function to nest data
         nested_data = nest_member_data(request_data)

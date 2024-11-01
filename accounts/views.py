@@ -24,7 +24,7 @@ class OTPSendView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         phone_number = serializer.validated_data["phone_number"]
-        otp_code = str(random.randint(100000, 999999))  # Generate otp
+        otp_code = str(random.randint(1000, 9999))  # Generate otp
 
         # Send OTP to the phone number
         # print(f"Sending OTP {otp_code} to {phone_number}")

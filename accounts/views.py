@@ -121,7 +121,6 @@ class OTPVerifyView(generics.GenericAPIView):
 #         )
 
 
-
 class NICVerificationView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         request_data = request.data.copy()

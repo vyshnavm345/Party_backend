@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def nest_member_data(request_data):
@@ -39,11 +39,11 @@ def flatten_member_data(member):
     }
 
 
+
 class MD:
     def __init__(self, month="", day=0):
         self.month = month
         self.day = day
-
 
 def month_and_date(val):
     # Ensure the day codes correspond correctly to the actual month-day structure.
@@ -74,7 +74,6 @@ def month_and_date(val):
     else:
         return MD("Invalid Month", -1)
 
-
 def validate_nic(user_details):
     nic = str(user_details.get("Nic")).strip()  # Ensure to strip whitespace
     date_of_birth = user_details.get("date_of_birth")
@@ -83,9 +82,9 @@ def validate_nic(user_details):
     print(f"Original NIC: '{nic}'")  # Debugging line
 
     # Check for 'V' at the end and process accordingly
-    if nic.endswith("V") or nic.endswith("v"):
+    if nic.endswith('V') or nic.endswith('v'):
         nic = nic[:-1]  # Remove 'V'
-
+    
     # Validate NIC length and format
     if len(nic) == 9:
         if not re.match(r"^\d{9}$", nic):  # Old NIC format should be digits only
@@ -100,33 +99,27 @@ def validate_nic(user_details):
     year_prefix = 1900 if len(nic) == 9 else 2000
     year = int(nic[:2]) + year_prefix
     day_code = int(nic[2:5]) if len(nic) == 9 else int(nic[4:7])
-
+    
     # Adjust for gender: Female if day_code > 500
     detected_gender = "female" if day_code > 500 else "male"
     if day_code > 500:
         day_code -= 500
 
     # Convert day_code to month and day
-    md = month_and_date(day_code)
-    if md.day == -1:
+    if day_code < 1 or day_code > 365:  # Check if the day_code is valid
         return False, "Invalid day code in NIC"
-
-    # Debugging output for the date extracted from NIC
-    print(f"Extracted Date from NIC: {md.day} {md.month} {year}")
+    
+    # Calculate the actual date
+    date = datetime(year, 1, 1) + timedelta(days=day_code - 1)
+    print(f"Extracted Date from NIC: {date.day} {date.month} {year}")
 
     # Compare date of birth
     try:
         dob_year, dob_month, dob_day = map(int, date_of_birth.split("-"))
-        print(
-            f"Provided Date of Birth: {dob_day}-{dob_month}-{dob_year}"
-        )  # Debugging line
+        print(f"Provided Date of Birth: {dob_day}-{dob_month}-{dob_year}")  # Debugging line
 
         # Check if the year and day/month extracted from NIC matches the provided date of birth
-        if (
-            (year != dob_year)
-            or (md.month != datetime(dob_year, dob_month, dob_day).strftime("%B"))
-            or (md.day != dob_day)
-        ):
+        if (year != dob_year) or (date.month != dob_month) or (date.day != dob_day):
             return False, "Date of birth does not match NIC"
     except ValueError:
         return False, "Date of birth format is incorrect"
@@ -137,16 +130,15 @@ def validate_nic(user_details):
 
     return True, "NIC and user details are valid"
 
-
 # # Example usage
 # user_details = {
 #     "first_name": "Madhav",
 #     "last_name": "M",
 #     "email": "madhav@sample.com",
-#     "date_of_birth": "1998-02-02",  # YYYY-MM-DD format
+#     "date_of_birth": "1992-10-11",  # YYYY-MM-DD format
 #     "position_in_party": "leader",
 #     "region": "Malva",
-#     "Nic": "980330330V",  # Old NIC format, valid (February 3, 1998)
+#     "Nic": "922852270v",  # Old NIC format, valid
 #     "phone": 7412589123,
 #     "gender": "male",
 #     "district": "district1",
@@ -155,3 +147,4 @@ def validate_nic(user_details):
 # }
 
 # is_valid, message = validate_nic(user_details)
+# print(f"The NIC is valid: {is_valid}. Message: {message}")

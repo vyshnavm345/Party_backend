@@ -66,12 +66,10 @@ class Member(models.Model):
 
 
 class Candidate(models.Model):
-    member = models.OneToOneField(
-        Member, on_delete=models.CASCADE, related_name="candidate"
+    user = models.OneToOneField(
+        BaseUser, on_delete=models.CASCADE, related_name="candidate"
     )
-    constituency = models.CharField(
-        max_length=100
-    )  # the constituency in which the candidate is running in
+    constituency = models.CharField(max_length=100)
     party_affiliation = models.CharField(max_length=100, null=True, blank=True)
     election_status = models.CharField(
         max_length=50,

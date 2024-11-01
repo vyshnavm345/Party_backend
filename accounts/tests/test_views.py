@@ -170,9 +170,6 @@ class TestMemberRegistration:
         )
 
 
-
-
-
 # @pytest.mark.django_db
 # class TestNICVerification:
 #     def test_nic_verification_success(self, client, member_data):
@@ -181,7 +178,7 @@ class TestMemberRegistration:
 #         # Add the necessary fields
 #         member_data["gender"] = "male"  # or "female"
 #         member_data["date_of_birth"] = "1998-02-02"  # Example date
-    
+
 #         response = client.post(url, member_data)
 #     # Add assertions here
 
@@ -202,11 +199,10 @@ class TestMemberRegistration:
 #             member_data["Nic"] = nic
 #             member_data["gender"] = "male"  # or "female"
 #             member_data["date_of_birth"] = "1998-02-02"
-            
-#             response = client.post(url, member_data)  
+
+#             response = client.post(url, member_data)
 #             assert response.status_code == status.HTTP_400_BAD_REQUEST
 #             assert response.data["detail"] == "Invalid NIC"
-
 
 
 # @pytest.mark.django_db

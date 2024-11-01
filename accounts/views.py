@@ -12,7 +12,7 @@ from .serializers import (
     OTPSendSerializer,
     OTPVerifySerializer,
 )
-from .utils import nest_member_data, validate_nic
+from .utils import nest_member_data, send_otp_via_textlk, validate_nic
 
 
 class OTPSendView(generics.GenericAPIView):
@@ -26,7 +26,8 @@ class OTPSendView(generics.GenericAPIView):
         otp_code = str(random.randint(100000, 999999))  # Generate otp
 
         # Send OTP to the phone number
-        print(f"Sending OTP {otp_code} to {phone_number}")
+        # print(f"Sending OTP {otp_code} to {phone_number}")
+        send_otp_via_textlk(phone_number, otp_code)
 
         # Save OTP to database
         OTP.objects.update_or_create(

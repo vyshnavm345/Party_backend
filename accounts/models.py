@@ -101,12 +101,8 @@ class Candidate(models.Model):
         return f"{self.first_name} {self.last_name} - Candidate for {self.constituency}"
 
 
-#
+# set up an age function
 
-#     def age(self):
-#         today = date.today()
-#         age = today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
-#         return age
 
 
 class OTP(models.Model):

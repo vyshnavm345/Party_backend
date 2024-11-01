@@ -1,26 +1,29 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
-from .models import Event, NewsFeed
+from .models import Event, News
+from .pagination import StandardResultsSetPagination
 from .serializers import EventSerializer, NewsSerializer
 
 
-class NewsFeedListCreateView(generics.ListCreateAPIView):
+class NewsListCreateView(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
-    queryset = NewsFeed.objects.all()
+    queryset = News.objects.all().order_by("-date")
     serializer_class = NewsSerializer
+    pagination_class = StandardResultsSetPagination
 
 
-class NewsFeedDetailView(generics.RetrieveUpdateDestroyAPIView):
+class NewsDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
-    queryset = NewsFeed.objects.all()
+    queryset = News.objects.all()
     serializer_class = NewsSerializer
 
 
 class EventListCreateView(generics.ListCreateAPIView):
-    queryset = Event.objects.all()
+    queryset = Event.objects.all().order_by("-date")
     serializer_class = EventSerializer
     permission_classes = [AllowAny]
+    pagination_class = StandardResultsSetPagination
 
 
 class EventDetailView(generics.RetrieveUpdateDestroyAPIView):

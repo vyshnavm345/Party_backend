@@ -14,6 +14,20 @@ class NewsFeed(models.Model):
         return f"{self.title} - {self.date}"
 
 
+class News(Page):
+    description = models.TextField()
+    image = models.ImageField(upload_to="news_feed_images/", null=True, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
+    content_panels = Page.content_panels + [
+        FieldPanel("description"),
+        FieldPanel("image"),
+    ]
+
+    def __str__(self) -> str:
+        return str(self.date)
+
+
 class Event(Page):
     heading = models.CharField(max_length=250)
     description = models.TextField()

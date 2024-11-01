@@ -85,7 +85,7 @@ class Candidate(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user.first_name} {self.user.last_name} - Candidate for {self.constituency}"
+        return f"{self.first_name} {self.last_name} - Candidate for {self.constituency}"
 
 
 class OTP(models.Model):

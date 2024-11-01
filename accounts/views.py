@@ -109,15 +109,46 @@ class NICVerificationView(generics.GenericAPIView):
         )
 
 
+# class MemberRegistrationView(generics.CreateAPIView):
+#     serializer_class = MemberSerializer
+
+#     def post(self, request, *args, **kwargs):
+#         request_data = request.data.copy()
+#         print(request_data)
+
+#         # Use the helper function to nest data
+#         nested_data = nest_member_data(request_data)
+
+#         # Pass the nested data to the serializer for validation and creation
+#         serializer = self.get_serializer(data=nested_data)
+#         serializer.is_valid(raise_exception=True)
+#         member = serializer.save()  # Save the member instance
+#         flat_serializer = FlatMemberSerializer(member)
+#         refresh = RefreshToken.for_user(member)
+
+#         return Response(
+#             {
+#                 **flat_serializer.data,
+#                 "refresh": str(refresh),
+#                 "access": str(refresh.access_token),
+#             },
+#             status=status.HTTP_201_CREATED,
+#         )
+
+
 class MemberRegistrationView(generics.CreateAPIView):
     serializer_class = MemberSerializer
 
     def post(self, request, *args, **kwargs):
         request_data = request.data.copy()
-        print(request_data)
+        print(request_data)  # Check what data is being sent
 
         # Use the helper function to nest data
-        nested_data = nest_member_data(request_data)
+        nested_data = nest_member_data(
+            request_data, request.FILES
+        )  # Pass request.FILES
+
+        print("The nested data is:", nested_data)
 
         # Pass the nested data to the serializer for validation and creation
         serializer = self.get_serializer(data=nested_data)
@@ -134,6 +165,16 @@ class MemberRegistrationView(generics.CreateAPIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+# if 'image' in request.FILES:
+#     image = request.FILES['image']
+# else:
+#     image = None  # or handle as needed
+# def post(self, request, *args, **kwargs):
+#     # Use request.FILES.get('image') instead of request.FILES['image']
+#     image = request.FILES.get('image')
+#     # Handle the rest of the form data and image processing
 
 
 class CandidateListCreateView(generics.ListCreateAPIView):

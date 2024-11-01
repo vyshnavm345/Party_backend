@@ -50,7 +50,8 @@ class FlatMemberSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source="user.first_name", read_only=True)
     last_name = serializers.CharField(source="user.last_name", read_only=True)
     email = serializers.EmailField(source="user.email", read_only=True)
-    date_of_birth = serializers.EmailField(source="user.date_of_birth", read_only=True)
+    date_of_birth = serializers.DateField(source="user.date_of_birth", read_only=True)
+    image = serializers.SerializerMethodField()  # Use a method to get the image URL
 
     class Meta:
         model = Member
@@ -67,6 +68,12 @@ class FlatMemberSerializer(serializers.ModelSerializer):
             "constituency",
             "image",
         ]
+
+    def get_image(self, obj):
+        """Return the image URL or None if no image is uploaded."""
+        if obj.image:
+            return obj.image.url  # Get the URL of the image if it exists
+        return None  # Return None if the image does not exist
 
 
 class CandidateSerializer(serializers.ModelSerializer):

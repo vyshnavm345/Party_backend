@@ -25,7 +25,7 @@ def send_otp_via_textlk(phone_number, otp):
         return None
 
 
-def nest_member_data(request_data):
+def nest_member_data(request_data, request_files):
     return {
         "user": {
             "first_name": request_data["first_name"],
@@ -40,13 +40,15 @@ def nest_member_data(request_data):
         "gender": request_data["gender"],
         "district": request_data["district"],
         "constituency": request_data["constituency"],
-        "image": request_data["image"],
+        "image": request_files.get("image"),  # Access image from request_files
     }
 
 
 def flatten_member_data(member):
     """Flatten member data for response."""
     user = member.user
+    print("member", member)
+    print("member", member.image.url)
     return {
         "first_name": user.first_name,
         "last_name": user.last_name,
@@ -58,7 +60,7 @@ def flatten_member_data(member):
         "gender": member.gender,
         "district": member.district,
         "constituency": member.constituency,
-        "image": member.image,
+        "image": member.image.url if member.image else None,
     }
 
 

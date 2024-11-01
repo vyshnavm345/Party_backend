@@ -1,15 +1,15 @@
 from rest_framework import serializers
 
-from .models import Event, NewsFeed
+from .models import Event, News
 
 
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = NewsFeed
+        model = News
         fields = "__all__"
 
     def validate_title(self, value):
-        if NewsFeed.objects.filter(title=value).exists():
+        if News.objects.filter(title=value).exists():
             raise serializers.ValidationError(
                 "A news article with this title already exists."
             )

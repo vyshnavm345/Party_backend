@@ -25,26 +25,6 @@ def send_otp_via_textlk(phone_number, otp):
         return None
 
 
-# def nest_member_data(request_data, request_files):
-#     print("The file returned inside the nested function : ",request_files.get("image"))
-#     return {
-#         "user": {
-#             "first_name": request_data["first_name"],
-#             "last_name": request_data["last_name"],
-#             "email": request_data["email"],
-#             "date_of_birth": request_data["date_of_birth"],
-#             "password": request_data.get("password"),
-#         },
-#         "position_in_party": request_data["position_in_party"],
-#         "Nic": request_data["Nic"],
-#         "phone": request_data["phone"],
-#         "gender": request_data["gender"],
-#         "district": request_data["district"],
-#         "constituency": request_data["constituency"],
-#         "image": request_files.get("image"),  # Access image from request_files
-#     }
-
-
 def nest_member_data(request_data, request_files):
     return {
         "user": {

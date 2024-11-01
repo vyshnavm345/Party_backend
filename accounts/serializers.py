@@ -80,6 +80,7 @@ class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate
         fields = [
+            "id",
             "first_name",
             "last_name",
             "fathers_name",

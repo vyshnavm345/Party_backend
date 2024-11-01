@@ -104,7 +104,6 @@ class Candidate(models.Model):
 # set up an age function
 
 
-
 class OTP(models.Model):
     phone_number = models.CharField(max_length=15, unique=True)
     otp_code = models.CharField(max_length=6)

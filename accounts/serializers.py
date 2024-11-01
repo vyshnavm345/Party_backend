@@ -72,8 +72,8 @@ class FlatMemberSerializer(serializers.ModelSerializer):
     def get_image(self, obj):
         """Return the image URL or None if no image is uploaded."""
         if obj.image:
-            return obj.image.url  # Get the URL of the image if it exists
-        return None  # Return None if the image does not exist
+            return obj.image.url
+        return None
 
 
 class CandidateSerializer(serializers.ModelSerializer):
@@ -82,15 +82,35 @@ class CandidateSerializer(serializers.ModelSerializer):
         fields = [
             "first_name",
             "last_name",
-            "constituency",
+            "fathers_name",
             "age",
+            "address",
+            "constituency",
             "party",
             "district",
             "image",
+            "state",
+            "education",
+            "date_of_birth",
+            "email",
+            "phone",
+            "gender",
             "election_status",
         ]
 
     def create(self, validated_data):
+        # Check if the email already exists
+        if Candidate.objects.filter(email=validated_data["email"]).exists():
+            raise serializers.ValidationError(
+                {"email": "This email is already in use."}
+            )
+
+        # Check if the phone number already exists
+        if Candidate.objects.filter(phone=validated_data["phone"]).exists():
+            raise serializers.ValidationError(
+                {"phone": "This phone number is already in use."}
+            )
+
         candidate = Candidate.objects.create(**validated_data)
         return candidate
 

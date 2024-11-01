@@ -68,11 +68,24 @@ class Member(models.Model):
 class Candidate(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
+    fathers_name = models.CharField(max_length=100, null=True, blank=True)
     age = models.PositiveIntegerField()
+    address = models.CharField(max_length=800, null=True, blank=True)
     constituency = models.CharField(max_length=100)
     party = models.CharField(max_length=100, null=True, blank=True)
     district = models.CharField(max_length=100, null=True, blank=True)
     image = models.ImageField(upload_to="candidate_images/", null=True, blank=True)
+    state = models.CharField(max_length=100, null=True, blank=True)
+    education = models.CharField(max_length=100, null=True, blank=True)
+    date_of_birth = models.DateField()
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    gender = models.CharField(
+        max_length=10,
+        choices=[("male", "Male"), ("female", "Female"), ("other", "Other")],
+        null=True,
+        blank=True,
+    )
     election_status = models.CharField(
         max_length=50,
         choices=[
@@ -86,6 +99,14 @@ class Candidate(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - Candidate for {self.constituency}"
+
+
+#
+
+#     def age(self):
+#         today = date.today()
+#         age = today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
+#         return age
 
 
 class OTP(models.Model):

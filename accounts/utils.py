@@ -84,40 +84,40 @@ def flatten_candidate_data(request_data):
     }
 
 
-class MD:
-    def __init__(self, month="", day=0):
-        self.month = month
-        self.day = day
+# class MD:
+#     def __init__(self, month="", day=0):
+#         self.month = month
+#         self.day = day
 
 
-def month_and_date(val):
-    # Ensure the day codes correspond correctly to the actual month-day structure.
-    if val <= 31:
-        return MD("January", val)
-    elif val <= 59:  # February in non-leap year has 28 days, hence 59
-        return MD("February", val - 31)
-    elif val <= 90:  # March has 31 days
-        return MD("March", val - 59)
-    elif val <= 120:  # April has 30 days
-        return MD("April", val - 90)
-    elif val <= 151:  # May has 31 days
-        return MD("May", val - 120)
-    elif val <= 181:  # June has 30 days
-        return MD("June", val - 151)
-    elif val <= 212:  # July has 31 days
-        return MD("July", val - 181)
-    elif val <= 243:  # August has 31 days
-        return MD("August", val - 212)
-    elif val <= 273:  # September has 30 days
-        return MD("September", val - 243)
-    elif val <= 304:  # October has 31 days
-        return MD("October", val - 273)
-    elif val <= 334:  # November has 30 days
-        return MD("November", val - 304)
-    elif val <= 365:  # December has 31 days
-        return MD("December", val - 334)
-    else:
-        return MD("Invalid Month", -1)
+# def month_and_date(val):
+#     # Ensure the day codes correspond correctly to the actual month-day structure.
+#     if val <= 31:
+#         return MD("January", val)
+#     elif val <= 59:  # February in non-leap year has 28 days, hence 59
+#         return MD("February", val - 31)
+#     elif val <= 90:  # March has 31 days
+#         return MD("March", val - 59)
+#     elif val <= 120:  # April has 30 days
+#         return MD("April", val - 90)
+#     elif val <= 151:  # May has 31 days
+#         return MD("May", val - 120)
+#     elif val <= 181:  # June has 30 days
+#         return MD("June", val - 151)
+#     elif val <= 212:  # July has 31 days
+#         return MD("July", val - 181)
+#     elif val <= 243:  # August has 31 days
+#         return MD("August", val - 212)
+#     elif val <= 273:  # September has 30 days
+#         return MD("September", val - 243)
+#     elif val <= 304:  # October has 31 days
+#         return MD("October", val - 273)
+#     elif val <= 334:  # November has 30 days
+#         return MD("November", val - 304)
+#     elif val <= 365:  # December has 31 days
+#         return MD("December", val - 334)
+#     else:
+#         return MD("Invalid Month", -1)
 
 
 def validate_nic(user_details):
@@ -142,8 +142,11 @@ def validate_nic(user_details):
         return False, "Invalid NIC length"
 
     # Extract year and day code from NIC
-    year_prefix = 1900 if len(nic) == 9 else 2000
-    year = int(nic[:2]) + year_prefix
+    year_prefix = 1900 if len(nic) == 9 else None
+    if not year_prefix:
+        year = int(nic[:4])
+    else:
+        year = int(nic[:2]) + year_prefix
     day_code = int(nic[2:5]) if len(nic) == 9 else int(nic[4:7])
 
     # Adjust for gender: Female if day_code > 500

@@ -86,7 +86,6 @@ class CandidateSerializer(serializers.ModelSerializer):
             "fathers_name",
             "age",
             "address",
-            "constituency",
             "party",
             "district",
             "image",

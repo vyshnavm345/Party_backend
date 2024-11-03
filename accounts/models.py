@@ -67,19 +67,19 @@ class Member(models.Model):
 
 class Candidate(models.Model):
     first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100, null=True, blank=True)
     fathers_name = models.CharField(max_length=100, null=True, blank=True)
-    age = models.PositiveIntegerField()
+    age = models.PositiveIntegerField(null=True, blank=True)
     address = models.CharField(max_length=800, null=True, blank=True)
-    constituency = models.CharField(max_length=100)
+    constituency = models.CharField(max_length=100, null=True, blank=True)
     party = models.CharField(max_length=100, null=True, blank=True)
     district = models.CharField(max_length=100, null=True, blank=True)
     image = models.ImageField(upload_to="candidate_images/", null=True, blank=True)
     state = models.CharField(max_length=100, null=True, blank=True)
     education = models.CharField(max_length=100, null=True, blank=True)
-    date_of_birth = models.DateField()
-    email = models.EmailField()
-    phone = models.CharField(max_length=15)
+    date_of_birth = models.DateField(null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    phone = models.CharField(max_length=15, null=True, blank=True)
     gender = models.CharField(
         max_length=10,
         choices=[("male", "Male"), ("female", "Female"), ("other", "Other")],

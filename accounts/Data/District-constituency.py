@@ -202,6 +202,31 @@ district_constituency_map = {
     ],
 }
 
+Districts = [
+    "Anuradhapura",
+    "Badulla",
+    "Batticaloa",
+    "Colombo",
+    "Digamadulla",
+    "Galle",
+    "Gampaha",
+    "Hambantota",
+    "Jaffna",
+    "Kalutara",
+    "Kandy",
+    "Kegalle",
+    "Kurunegala",
+    "Matale",
+    "Matara",
+    "Moneragala",
+    "Nuwara Eliya",
+    "Polonnaruwa",
+    "Puttalam",
+    "Ratnapura",
+    "Trincomalee",
+    "Vanni",
+]
+
 # DISTRICT_DIVISIONS = {
 #     "Anuradhapura": ["Anuradhapura-East", "Anuradhapura-West", "Horowupotana", "Kalawewa", "Kekirawa", "Medawachchiya", "Mihintale", "Postal-Votes-Apura"],
 #     "Badulla": ["Badulla", "Bandarawela", "Hali_Ela", "Haputale", "Mahiyangane", "Passara", "Postal-Votes-Badulla", "Uva-Paranagama", "Welimada", "Wiyaluwa"],

@@ -126,3 +126,7 @@ class CandidateSerializer(serializers.ModelSerializer):
 
     #     instance.save()
     #     return instance
+
+
+class DistrictSerializer(serializers.Serializer):
+    district = serializers.CharField(max_length=100)

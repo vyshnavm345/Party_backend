@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     CandidateDetailView,
     CandidateListCreateView,
+    DistrictListView,
     MemberRegistrationView,
     NICVerificationView,
     OTPSendView,
@@ -20,4 +21,5 @@ urlpatterns = [
     path(
         "candidates/<int:pk>/", CandidateDetailView.as_view(), name="candidate-detail"
     ),
+    path("districts/", DistrictListView.as_view(), name="district-list"),
 ]

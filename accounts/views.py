@@ -4,6 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import OTP, Candidate, Member
@@ -153,6 +154,37 @@ class CandidateDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
     permission_classes = [AllowAny]
+
+
+class DistrictListView(APIView):
+    districts = [
+        "Anuradhapura",
+        "Badulla",
+        "Batticaloa",
+        "Colombo",
+        "Digamadulla",
+        "Galle",
+        "Gampaha",
+        "Hambantota",
+        "Jaffna",
+        "Kalutara",
+        "Kandy",
+        "Kegalle",
+        "Kurunegala",
+        "Matale",
+        "Matara",
+        "Moneragala",
+        "Nuwara Eliya",
+        "Polonnaruwa",
+        "Puttalam",
+        "Ratnapura",
+        "Trincomalee",
+        "Vanni",
+    ]
+
+    def get(self, request):
+        response_data = {"districts": self.districts}
+        return Response(response_data)
 
 
 class MembersListView(generics.ListAPIView):

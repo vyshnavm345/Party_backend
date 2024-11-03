@@ -66,14 +66,40 @@ class Member(models.Model):
 
 
 class Candidate(models.Model):
+    DISTRICT_CHOICES = [
+        ("Anuradhapura", "Anuradhapura"),
+        ("Badulla", "Badulla"),
+        ("Batticaloa", "Batticaloa"),
+        ("Colombo", "Colombo"),
+        ("Digamadulla", "Digamadulla"),
+        ("Galle", "Galle"),
+        ("Gampaha", "Gampaha"),
+        ("Hambantota", "Hambantota"),
+        ("Jaffna", "Jaffna"),
+        ("Kalutara", "Kalutara"),
+        ("Kandy", "Kandy"),
+        ("Kegalle", "Kegalle"),
+        ("Kurunegala", "Kurunegala"),
+        ("Matale", "Matale"),
+        ("Matara", "Matara"),
+        ("Moneragala", "Moneragala"),
+        ("NuwaraEliya", "Nuwara Eliya"),
+        ("Polonnaruwa", "Polonnaruwa"),
+        ("Puttalam", "Puttalam"),
+        ("Ratnapura", "Ratnapura"),
+        ("Trincomalee", "Trincomalee"),
+        ("Vanni", "Vanni"),
+    ]
+
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100, null=True, blank=True)
     fathers_name = models.CharField(max_length=100, null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     address = models.CharField(max_length=800, null=True, blank=True)
-    constituency = models.CharField(max_length=100, null=True, blank=True)
     party = models.CharField(max_length=100, null=True, blank=True)
-    district = models.CharField(max_length=100, null=True, blank=True)
+    district = models.CharField(
+        max_length=100, choices=DISTRICT_CHOICES, null=True, blank=True
+    )
     image = models.ImageField(upload_to="candidate_images/", null=True, blank=True)
     state = models.CharField(max_length=100, null=True, blank=True)
     education = models.CharField(max_length=100, null=True, blank=True)
@@ -98,10 +124,9 @@ class Candidate(models.Model):
     )
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} - Candidate for {self.constituency}"
+        return f"{self.first_name} {self.last_name} - Candidate for {self.district}"
 
-
-# set up an age function
+    # Need to set up an age function later to get the age directly from date_of_birth
 
 
 class OTP(models.Model):

@@ -41,6 +41,30 @@ class BaseUser(AbstractUser, PermissionsMixin):
 
 
 class Member(models.Model):
+    DISTRICT_CHOICES = [
+        ("Anuradhapura", "Anuradhapura"),
+        ("Badulla", "Badulla"),
+        ("Batticaloa", "Batticaloa"),
+        ("Colombo", "Colombo"),
+        ("Digamadulla", "Digamadulla"),
+        ("Galle", "Galle"),
+        ("Gampaha", "Gampaha"),
+        ("Hambantota", "Hambantota"),
+        ("Jaffna", "Jaffna"),
+        ("Kalutara", "Kalutara"),
+        ("Kandy", "Kandy"),
+        ("Kegalle", "Kegalle"),
+        ("Kurunegala", "Kurunegala"),
+        ("Matale", "Matale"),
+        ("Matara", "Matara"),
+        ("Moneragala", "Moneragala"),
+        ("Nuwara Eliya", "Nuwara Eliya"),
+        ("Polonnaruwa", "Polonnaruwa"),
+        ("Puttalam", "Puttalam"),
+        ("Ratnapura", "Ratnapura"),
+        ("Trincomalee", "Trincomalee"),
+        ("Vanni", "Vanni"),
+    ]
     user = models.OneToOneField(
         BaseUser, on_delete=models.CASCADE, related_name="member"
     )
@@ -57,7 +81,9 @@ class Member(models.Model):
         null=True,
         blank=True,
     )
-    district = models.CharField(max_length=100, null=True, blank=True)
+    district = models.CharField(
+        max_length=100, choices=DISTRICT_CHOICES, null=True, blank=True
+    )
     constituency = models.CharField(max_length=100, null=True, blank=True)
     image = models.ImageField(upload_to="member_images/", null=True, blank=True)
 
@@ -83,7 +109,7 @@ class Candidate(models.Model):
         ("Matale", "Matale"),
         ("Matara", "Matara"),
         ("Moneragala", "Moneragala"),
-        ("NuwaraEliya", "Nuwara Eliya"),
+        ("Nuwara Eliya", "Nuwara Eliya"),
         ("Polonnaruwa", "Polonnaruwa"),
         ("Puttalam", "Puttalam"),
         ("Ratnapura", "Ratnapura"),

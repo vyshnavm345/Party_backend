@@ -30,7 +30,7 @@ class MemberSerializer(serializers.ModelSerializer):
         fields = [
             "user",
             "position_in_party",
-            "Nic",
+            "nic",
             "phone",
             "gender",
             "district",
@@ -61,7 +61,7 @@ class FlatMemberSerializer(serializers.ModelSerializer):
             "email",
             "date_of_birth",
             "position_in_party",
-            "Nic",
+            "nic",
             "phone",
             "gender",
             "district",

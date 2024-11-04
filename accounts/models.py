@@ -73,7 +73,7 @@ class Member(models.Model):
     )  # e.g., "Party Leader", "Treasurer"
     joined_on = models.DateField(auto_now_add=True)
     verified_member = models.BooleanField(default=False)
-    Nic = models.CharField(max_length=50, unique=True, null=True)
+    nic = models.CharField(max_length=50, unique=True, null=True)
     phone = models.CharField(max_length=15, unique=True)
     gender = models.CharField(
         max_length=10,

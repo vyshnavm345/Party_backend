@@ -96,6 +96,7 @@ class CandidateSerializer(serializers.ModelSerializer):
             "phone",
             "gender",
             "election_status",
+            "biography",
         ]
 
     def create(self, validated_data):

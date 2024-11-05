@@ -1,5 +1,4 @@
 import re
-from datetime import datetime, timedelta
 
 import requests
 
@@ -84,48 +83,12 @@ def flatten_candidate_data(request_data):
     }
 
 
-# class MD:
-#     def __init__(self, month="", day=0):
-#         self.month = month
-#         self.day = day
-
-
-# def month_and_date(val):
-#     # Ensure the day codes correspond correctly to the actual month-day structure.
-#     if val <= 31:
-#         return MD("January", val)
-#     elif val <= 59:  # February in non-leap year has 28 days, hence 59
-#         return MD("February", val - 31)
-#     elif val <= 90:  # March has 31 days
-#         return MD("March", val - 59)
-#     elif val <= 120:  # April has 30 days
-#         return MD("April", val - 90)
-#     elif val <= 151:  # May has 31 days
-#         return MD("May", val - 120)
-#     elif val <= 181:  # June has 30 days
-#         return MD("June", val - 151)
-#     elif val <= 212:  # July has 31 days
-#         return MD("July", val - 181)
-#     elif val <= 243:  # August has 31 days
-#         return MD("August", val - 212)
-#     elif val <= 273:  # September has 30 days
-#         return MD("September", val - 243)
-#     elif val <= 304:  # October has 31 days
-#         return MD("October", val - 273)
-#     elif val <= 334:  # November has 30 days
-#         return MD("November", val - 304)
-#     elif val <= 365:  # December has 31 days
-#         return MD("December", val - 334)
-#     else:
-#         return MD("Invalid Month", -1)
-
-
 def validate_nic(user_details):
     nic = str(user_details.get("Nic")).strip()  # Ensure to strip whitespace
     date_of_birth = user_details.get("date_of_birth")
     gender = user_details.get("gender").lower()
 
-    print(f"Original NIC: '{nic}'")  # Debugging line
+    # print(f"Original NIC: '{nic}'")  # Debugging line
 
     # Check for 'V' at the end and process accordingly
     if nic.endswith("V") or nic.endswith("v"):
@@ -154,23 +117,30 @@ def validate_nic(user_details):
     if day_code > 500:
         day_code -= 500
 
-    # Convert day_code to month and day
-    if day_code < 1 or day_code > 365:  # Check if the day_code is valid
+    # Check if day_code is within the range we assume (1-366)
+    if day_code < 1 or day_code > 366:
         return False, "Invalid day code in NIC"
 
-    # Calculate the actual date
-    date = datetime(year, 1, 1) + timedelta(days=day_code - 1)
-    print(f"Extracted Date from NIC: {date.day} {date.month} {year}")
+    # Define the days in each month, assuming February has 29 days for all years
+    days_in_month = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    month, day = 1, day_code
+
+    # Calculate month and day by iterating through days_in_month
+    for days in days_in_month:
+        if day <= days:
+            break
+        day -= days
+        month += 1
+
+    # print(f"Extracted Date from NIC: {day} {month} {year}")
 
     # Compare date of birth
     try:
         dob_year, dob_month, dob_day = map(int, date_of_birth.split("-"))
-        print(
-            f"Provided Date of Birth: {dob_day}-{dob_month}-{dob_year}"
-        )  # Debugging line
+        # print(f"Provided Date of Birth: {dob_day}-{dob_month}-{dob_year}")
 
         # Check if the year and day/month extracted from NIC matches the provided date of birth
-        if (year != dob_year) or (date.month != dob_month) or (date.day != dob_day):
+        if (year != dob_year) or (month != dob_month) or (day != dob_day):
             return False, "Date of birth does not match NIC"
     except ValueError:
         return False, "Date of birth format is incorrect"
@@ -183,14 +153,18 @@ def validate_nic(user_details):
 
 
 # # Example usage
+# Testing the function
+# l = [("922852270v", "1992-10-11"), ("972491160v", "1997-09-05"), ("198831704968", "1988-11-12"),("923662270v","1992-12-31"), ("920102270v","1992-01-10"), ]
+
+# # Example usage
 # user_details = {
 #     "first_name": "Madhav",
 #     "last_name": "M",
 #     "email": "madhav@sample.com",
-#     "date_of_birth": "1992-10-11",  # YYYY-MM-DD format
+#     "date_of_birth": "1988-11-12",  # YYYY-MM-DD format
 #     "position_in_party": "leader",
 #     "region": "Malva",
-#     "Nic": "922852270v",  # Old NIC format, valid
+#     "Nic": "198831704968",  # Old NIC format, valid
 #     "phone": 7412589123,
 #     "gender": "male",
 #     "district": "district1",
@@ -198,5 +172,9 @@ def validate_nic(user_details):
 #     "image": None
 # }
 
-# is_valid, message = validate_nic(user_details)
-# print(f"The NIC is valid: {is_valid}. Message: {message}")
+# for i in l:
+#     user_details['Nic'] = i[0]
+#     user_details['date_of_birth'] = i[1]
+#     is_valid, message = validate_nic(user_details)
+#     print(f"The NIC is valid: {is_valid}. Message: {message}")
+#     print()

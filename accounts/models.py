@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from wagtail.admin.panels import FieldPanel
+from wagtail.snippets.models import register_snippet
 
 
 class UserManager(BaseUserManager):
@@ -91,6 +93,7 @@ class Member(models.Model):
         return f"{self.user.first_name} {self.user.last_name} - {self.position_in_party or 'Member'}"
 
 
+@register_snippet
 class Candidate(models.Model):
     DISTRICT_CHOICES = [
         ("Anuradhapura", "Anuradhapura"),
@@ -149,6 +152,24 @@ class Candidate(models.Model):
         ],
         default="nominated",
     )
+    panels = [
+        FieldPanel("first_name"),
+        FieldPanel("last_name"),
+        FieldPanel("fathers_name"),
+        FieldPanel("age"),
+        FieldPanel("address"),
+        FieldPanel("party"),
+        FieldPanel("district"),
+        FieldPanel("image"),
+        FieldPanel("state"),
+        FieldPanel("education"),
+        FieldPanel("date_of_birth"),
+        FieldPanel("email"),
+        FieldPanel("phone"),
+        FieldPanel("biography"),
+        FieldPanel("gender"),
+        FieldPanel("election_status"),
+    ]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - Candidate for {self.district}"

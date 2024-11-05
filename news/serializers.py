@@ -1,15 +1,15 @@
 from rest_framework import serializers
 
-from .models import Event, News
+from .models import EventsFeed, NewsFeed
 
 
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = News
+        model = NewsFeed
         fields = "__all__"
 
     def validate_title(self, value):
-        if News.objects.filter(title=value).exists():
+        if NewsFeed.objects.filter(title=value).exists():
             raise serializers.ValidationError(
                 "A news article with this title already exists."
             )
@@ -18,11 +18,11 @@ class NewsSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Event
-        fields = ["id", "heading", "description", "image", "date"]
+        model = EventsFeed
+        fields = ["id", "description", "image", "date"]
 
     def create(self, validated_data):
-        return Event.objects.create(**validated_data)
+        return EventsFeed.objects.create(**validated_data)
 
 
 # class EventSerializer(serializers.ModelSerializer):

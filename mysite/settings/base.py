@@ -63,7 +63,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "mysite.wsgi.application"
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -71,7 +70,7 @@ DATABASES = {
         "USER": "udv_user",
         "PASSWORD": "yU7xYaJz56mUxGh",
         "PORT": "5432",
-        "HOST": "localhost",
+        "HOST": "localhost"
     }
 }
 

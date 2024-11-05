@@ -1,0 +1,7 @@
+load database
+     from sqlite:////home/projects/backend/Party_backend/db.sqlite3
+     into postgresql://udv_user:yU7xYaJz56mUxGh@localhost:5432/udv
+
+ with include drop, create tables, create indexes, reset sequences
+
+  set work_mem to '16MB', maintenance_work_mem to '512 MB';

@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from .models import BaseUser, Candidate, Member
@@ -40,9 +41,13 @@ class MemberSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop("user")
-        user = BaseUserSerializer.create(BaseUserSerializer(), validated_data=user_data)
-        member = Member.objects.create(user=user, **validated_data)
-        return member
+        try:
+            with transaction.atomic():
+                user = BaseUser.objects.create(**user_data)
+                member = Member.objects.create(user=user, **validated_data)
+            return member
+        except Exception as e:
+            raise serializers.ValidationError(f"Error creating member: {str(e)}")
 
 
 class FlatMemberSerializer(serializers.ModelSerializer):

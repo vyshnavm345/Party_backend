@@ -178,7 +178,7 @@ class DistrictListView(APIView):
 
 
 class MembersListView(generics.ListAPIView):
-    queryset = Member.objects.all()
+    queryset = Member.objects.select_related("user").all()
     serializer_class = MemberSerializer
     permission_classes = [AllowAny]
 

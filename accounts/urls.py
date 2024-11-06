@@ -5,6 +5,7 @@ from .views import (  # DistrictViewSet
     CandidateListCreateView,
     DistrictListView,
     MemberRegistrationView,
+    MembersListView,
     NICVerificationView,
     OTPSendView,
     OTPVerifyView,
@@ -25,5 +26,6 @@ urlpatterns = [
         "candidates/<int:pk>/", CandidateDetailView.as_view(), name="candidate-detail"
     ),
     path("districts/", DistrictListView.as_view(), name="district-list"),
+    path("members/", MembersListView.as_view(), name="members-list"),
     # path('', include(router.urls)),
 ]

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # import pytest
 # from rest_framework import status
 # from rest_framework.test import APIClient
@@ -129,6 +130,8 @@
 #         assert len(response.data["districts"]) > 0
 
 
+=======
+>>>>>>> feature
 import os
 
 import pytest
@@ -302,130 +305,3 @@ class TestMemberRegistration:
     #         response.data["reason"] == "Date of birth does not match NIC"
     #         or response.data["reason"] == "Gender does not match NIC information"
     #     )
-
-
-# @pytest.mark.django_db
-# class TestNICVerification:
-#     def test_nic_verification_success(self, client, member_data):
-#         url = reverse("nic-verification")
-#         member_data["Nic"] = "980330330V"  # Use a valid NIC for testing
-#         # Add the necessary fields
-#         member_data["gender"] = "male"  # or "female"
-#         member_data["date_of_birth"] = "1998-02-02"  # Example date
-
-#         response = client.post(url, member_data)
-#     # Add assertions here
-
-
-#     def test_nic_verification_invalid(self, client):
-#         url = reverse("nic-verification")
-
-#         # Test with invalid NICs
-#         invalid_nics = [
-#             "12345678",  # Too short
-#             "12345678901",  # Too long
-#             "1234567a89",  # Invalid characters
-#             "123456789v",  # Invalid ending
-#             "987654321",  # Valid length but invalid for your case
-#         ]
-
-#         for nic in invalid_nics:
-#             member_data["Nic"] = nic
-#             member_data["gender"] = "male"  # or "female"
-#             member_data["date_of_birth"] = "1998-02-02"
-
-#             response = client.post(url, member_data)
-#             assert response.status_code == status.HTTP_400_BAD_REQUEST
-#             assert response.data["detail"] == "Invalid NIC"
-
-
-# @pytest.mark.django_db
-# class TestMemberRegistration:
-#     def test_member_registration(self, client, member_data):
-#         # First, verify the NIC
-#         nic_verification_url = reverse("nic-verification")
-#         response = client.post(nic_verification_url, {"nic": member_data["Nic"]})
-#         assert response.status_code == status.HTTP_200_OK
-
-#         url = reverse("register")
-#         response = client.post(url, member_data, format="json")
-
-#         # Check for a successful registration
-#         assert response.status_code == status.HTTP_201_CREATED
-#         # Check for fields in the flattened response structure
-#         assert "first_name" in response.data
-#         assert "last_name" in response.data
-#         assert response.data["phone"] == member_data["phone"]
-#         assert response.data["gender"] == member_data["gender"]
-#         assert response.data["district"] == member_data["district"]
-#         assert response.data["constituency"] == member_data["constituency"]
-
-#         # Check that a member was created with the expected data
-#         member = Member.objects.get(phone=member_data["phone"])
-#         assert member is not None
-#         assert member.user.email == member_data["email"]
-#         assert member.gender == member_data["gender"]
-#         assert member.district == member_data["district"]
-#         assert member.constituency == member_data["constituency"]
-
-#     def test_member_registration_existing_phone(self, client, member_data):
-#         # First, verify the NIC
-#         nic_verification_url = reverse("nic-verification")
-#         response = client.post(nic_verification_url, {"nic": member_data["Nic"]})
-#         assert response.status_code == status.HTTP_200_OK
-
-#         url = reverse("register")
-
-#         # Register the member first time
-#         client.post(url, member_data, format="json")
-
-#         # Modify member_data to have a different email and try registering again
-#         member_data["email"] = "new_email@example.com"
-#         response = client.post(url, member_data, format="json")
-
-#         # Check for duplicate phone number error
-#         assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-#     def test_member_registration_invalid_nic(self, client, member_data):
-#         url = reverse("register")
-
-#         # Test with an invalid NIC
-#         invalid_nics = [
-#             "12345678",  # Too short
-#             "12345678901",  # Too long
-#             "1234567a89",  # Invalid characters
-#             "123456789v",  # Invalid ending
-#             "987654321",  # Valid length but invalid for your case
-#         ]
-
-#         for nic in invalid_nics:
-#             member_data["Nic"] = nic
-#             # Verify the NIC first
-#             nic_verification_url = reverse("nic-verification")
-#             response = client.post(nic_verification_url, {"nic": nic})
-#             assert response.status_code == status.HTTP_400_BAD_REQUEST  # Expect failure on NIC verification
-
-#             # Attempt to register with the invalid NIC
-#             response = client.post(url, member_data, format="json")
-#             assert response.status_code == status.HTTP_400_BAD_REQUEST
-#             assert response.data["detail"] == "Invalid NIC"
-
-#     def test_member_registration_nic_dob_gender_mismatch(self, client, member_data):
-#         # First, verify the NIC
-#         nic_verification_url = reverse("nic-verification")
-#         response = client.post(nic_verification_url, {"nic": member_data["Nic"]})
-#         assert response.status_code == status.HTTP_200_OK
-
-#         url = reverse("register")
-
-#         # Test with a valid NIC but incorrect DOB and gender
-#         member_data["Nic"] = "123456789"  # Set a NIC that you know is valid
-#         member_data["date_of_birth"] = "2000-01-01"  # DOB does not match NIC info
-#         member_data["gender"] = "female"  # Gender does not match NIC info
-
-#         response = client.post(url, member_data, format="json")
-#         assert response.status_code == status.HTTP_400_BAD_REQUEST
-#         assert (
-#             response.data["reason"] == "Date of birth does not match NIC"
-#             or response.data["reason"] == "Gender does not match NIC information"
-#         )

@@ -198,20 +198,3 @@ class OTP(models.Model):
         # Consider OTP valid for 5 minutes
         return timezone.now() <= self.created_at + timezone.timedelta(minutes=5)
 
-
-# class OTP(models.Model):
-#     phone_number = models.CharField(max_length=15, unique=True)
-#     otp_code = models.CharField(max_length=6)
-#     created_at = models.DateTimeField(null=True, blank=True)
-
-#     def is_valid(self):
-#         # Consider OTP valid for 5 minutes
-#         return timezone.now() <= self.created_at + timezone.timedelta(minutes=5)
-
-#     def update_otp(self, new_otp_code):
-#         self.otp_code = new_otp_code
-#         self.created_at = timezone.now()  # Update created_at whenever the OTP is updated
-#         self.save()
-
-
-# set district field to null=True blank=True

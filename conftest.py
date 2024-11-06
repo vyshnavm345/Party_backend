@@ -1,7 +1,8 @@
 # conftest.py
+import os
+
 import pytest
 from dotenv import load_dotenv
-import os
 
 # # Load environment variables from the .env file
 # @pytest.fixture(autouse=True)

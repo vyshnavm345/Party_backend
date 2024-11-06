@@ -129,25 +129,17 @@
 #         assert len(response.data["districts"]) > 0
 
 
-
-
-
-
-
-
-
-
-
 import os
+
 import pytest
 from django.urls import reverse
-from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from accounts.models import OTP, Member
 
 print(os.environ)  # Prints all environment variables
+
 
 @pytest.fixture
 def client():
@@ -310,15 +302,6 @@ class TestMemberRegistration:
     #         response.data["reason"] == "Date of birth does not match NIC"
     #         or response.data["reason"] == "Gender does not match NIC information"
     #     )
-
-
-
-
-
-
-
-
-
 
 
 # @pytest.mark.django_db

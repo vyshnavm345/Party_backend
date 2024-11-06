@@ -49,7 +49,7 @@ class BaseUser(AbstractUser, PermissionsMixin):
 #     panels = [
 #         FieldPanel("name"),
 #     ]
-    
+
 #     def __str__(self):
 #         return self.name
 
@@ -212,8 +212,6 @@ class OTP(models.Model):
 #         self.otp_code = new_otp_code
 #         self.created_at = timezone.now()  # Update created_at whenever the OTP is updated
 #         self.save()
-
-
 
 
 # set district field to null=True blank=True

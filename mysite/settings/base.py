@@ -1,5 +1,6 @@
-import environ
 import os
+
+import environ
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
@@ -9,8 +10,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 env = environ.Env()
 
 # Read the .env file
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 INSTALLED_APPS = [
@@ -37,10 +37,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "news",
-    'rest_framework',
+    "rest_framework",
+    "corsheaders",
+    "silk",
 ]
 
 MIDDLEWARE = [
+    "silk.middleware.SilkyMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -164,3 +168,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
+
+CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS", default="").split(",")
+
+SILKY_PYTHON_PROFILER = True

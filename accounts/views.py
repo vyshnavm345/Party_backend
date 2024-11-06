@@ -1,20 +1,19 @@
 import random
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, status, viewsets
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import OTP, Candidate, Member
-from .serializers import (
+from .serializers import (  # DistrictSerializer
     CandidateSerializer,
     FlatMemberSerializer,
     MemberSerializer,
     OTPSendSerializer,
     OTPVerifySerializer,
-    # DistrictSerializer
 )
 from .utils import nest_member_data, send_otp_via_textlk, validate_nic
 
@@ -27,13 +26,10 @@ class OTPSendView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         phone_number = serializer.validated_data["phone_number"]
-        otp_code = str(random.randint(1000, 9999))  # Generate otp
+        otp_code = str(random.randint(1000, 9999))
 
-        # Send OTP to the phone number
-        # print(f"Sending OTP {otp_code} to {phone_number}")
         send_otp_via_textlk(phone_number, otp_code)
 
-        # Save OTP to database
         OTP.objects.update_or_create(
             phone_number=phone_number, defaults={"otp_code": otp_code}
         )
@@ -64,7 +60,7 @@ class OTPVerifyView(generics.GenericAPIView):
                 otp.delete()
                 member = Member.objects.get(phone=phone_number)
 
-                # Use the FlatMemberSerializer to serialize the member data
+                # FlatMemberSerializer to serialize the member data
                 flat_serializer = FlatMemberSerializer(member)
 
                 refresh = RefreshToken.for_user(member)
@@ -93,7 +89,6 @@ class OTPVerifyView(generics.GenericAPIView):
 class NICVerificationView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         request_data = request.data.copy()
-        print(request_data)
 
         # Perform NIC validation
         nic_valid, message = validate_nic(request_data)
@@ -117,19 +112,13 @@ class MemberRegistrationView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         request_data = request.data.copy()
-        print(request_data)  # Check what data is being sent
 
-        # Use the helper function to nest data
-        nested_data = nest_member_data(
-            request_data, request.FILES
-        )  # Pass request.FILES
+        # function for nesting data
+        nested_data = nest_member_data(request_data, request.FILES)
 
-        print("The nested data is:", nested_data)
-
-        # Pass the nested data to the serializer for validation and creation
         serializer = self.get_serializer(data=nested_data)
         serializer.is_valid(raise_exception=True)
-        member = serializer.save()  # Save the member instance
+        member = serializer.save()
         flat_serializer = FlatMemberSerializer(member)
         refresh = RefreshToken.for_user(member)
 
@@ -186,8 +175,8 @@ class DistrictListView(APIView):
     def get(self, request):
         response_data = {"districts": self.districts}
         return Response(response_data)
-    
-    
+
+
 class MembersListView(generics.ListAPIView):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer

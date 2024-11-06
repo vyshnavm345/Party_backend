@@ -115,19 +115,6 @@ class CandidateSerializer(serializers.ModelSerializer):
         candidate = Candidate.objects.create(**validated_data)
         return candidate
 
-    # def update(self, instance, validated_data):
-
-    #     # Update candidate fields
-    #     instance.constituency = validated_data.get('constituency', instance.constituency)
-    #     instance.age = validated_data.get('age', instance.age)
-    #     instance.party = validated_data.get('party', instance.party)
-    #     instance.district = validated_data.get('district', instance.district)
-    #     instance.image = validated_data.get('image', instance.image)
-    #     instance.election_status = validated_data.get('election_status', instance.election_status)
-
-    #     instance.save()
-    #     return instance
-
 
 # class DistrictSerializer(serializers.ModelSerializer):
 #     class Meta:

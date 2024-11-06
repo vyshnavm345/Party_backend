@@ -129,5 +129,7 @@ class CandidateSerializer(serializers.ModelSerializer):
     #     return instance
 
 
-class DistrictSerializer(serializers.Serializer):
-    district = serializers.CharField(max_length=100)
+# class DistrictSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = District
+#         fields = ['id', 'name']

@@ -1,7 +1,7 @@
 import random
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -14,6 +14,7 @@ from .serializers import (
     MemberSerializer,
     OTPSendSerializer,
     OTPVerifySerializer,
+    # DistrictSerializer
 )
 from .utils import nest_member_data, send_otp_via_textlk, validate_nic
 
@@ -185,9 +186,19 @@ class DistrictListView(APIView):
     def get(self, request):
         response_data = {"districts": self.districts}
         return Response(response_data)
-
-
+    
+    
 class MembersListView(generics.ListAPIView):
     queryset = Member.objects.all()
     serializer_class = MemberSerializer
     permission_classes = [AllowAny]
+
+
+# class DistrictViewSet(viewsets.ModelViewSet):
+#     queryset = District.objects.all()
+#     serializer_class = DistrictSerializer
+
+#     def list(self, request, *args, **kwargs):
+#         # Override the list method to return only the district names
+#         districts = District.objects.values_list('name', flat=True).order_by("name")
+#         return Response({"districts": districts})

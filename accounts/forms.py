@@ -1,6 +1,5 @@
-# forms.py
 from django import forms
 
 
 class UserDeleteForm(forms.Form):
-    email = forms.EmailField(label="Email", required=True)
+    contact_info = forms.CharField(label="Email or Phone", max_length=100)

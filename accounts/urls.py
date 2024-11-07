@@ -1,15 +1,15 @@
 from django.urls import path
 
-from .views import (  # DistrictViewSet
+from .views import (  # DistrictViewSet; delete_user_by_email_or_phone,
     CandidateDetailView,
     CandidateListCreateView,
+    DeleteUserView,
     DistrictListView,
     MemberRegistrationView,
     MembersListView,
     NICVerificationView,
     OTPSendView,
     OTPVerifyView,
-    delete_user_by_email,
 )
 
 # router = DefaultRouter()
@@ -28,6 +28,6 @@ urlpatterns = [
     ),
     path("districts/", DistrictListView.as_view(), name="district-list"),
     path("members/", MembersListView.as_view(), name="members-list"),
-    path("delete_user/", delete_user_by_email, name="delete_user_by_email"),
+    path("delete_user/", DeleteUserView.as_view(), name="delete_user_by_email"),
     # path('', include(router.urls)),
 ]

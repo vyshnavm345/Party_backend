@@ -1,10 +1,10 @@
 import random
 
 from django.contrib.auth import get_user_model
+from django.db import transaction
+from django.db.models import Q
 from django.http import JsonResponse
-
-# views.py
-from django.shortcuts import get_object_or_404, render
+from django.views.generic.edit import FormView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
@@ -13,8 +13,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .forms import UserDeleteForm
-from .models import OTP, Candidate, Member
-from .serializers import (  # DistrictSerializer
+from .models import OTP, BaseUser, Candidate, Member
+from .serializers import (
     CandidateSerializer,
     FlatMemberSerializer,
     MemberSerializer,
@@ -201,27 +201,36 @@ class MembersListView(generics.ListAPIView):
 #         return Response({"districts": districts})
 
 
-User = get_user_model()
+class DeleteUserView(FormView):
+    form_class = UserDeleteForm
+    template_name = "delete_user_form.html"
 
+    def form_valid(self, form):
+        contact_info = form.cleaned_data["contact_info"]
 
-def delete_user_by_email(request):
-    if request.method == "POST":
-        form = UserDeleteForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data["email"]
-            user = get_object_or_404(User, email=email)
-            if user:
-                user.delete()
-                return JsonResponse(
-                    {"success": f"User with email {email} has been deleted."}
+        try:
+            with transaction.atomic():
+                user = (
+                    BaseUser.objects.select_related("member")
+                    .filter(Q(email=contact_info) | Q(member__phone=contact_info))
+                    .first()
                 )
-            else:
-                return JsonResponse(
-                    {"error": f"No user found with email {email}."}, status=404
-                )
-        else:
-            return JsonResponse({"error": "Invalid form data."}, status=400)
 
-    # Render form if the request is not POST
-    form = UserDeleteForm()
-    return render(request, "delete_user_form.html", {"form": form})
+                if user:
+                    user.delete()
+                    return JsonResponse(
+                        {
+                            "message": f"User with contact info {contact_info} has been deleted."
+                        }
+                    )
+
+            return JsonResponse(
+                {"error": f"No user found with contact info {contact_info}."},
+                status=404,
+            )
+
+        except Exception as e:
+            return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
+
+    def form_invalid(self, form):
+        return JsonResponse({"error": "Invalid form data."}, status=400)

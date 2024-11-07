@@ -55,30 +55,6 @@ class District(models.Model):
 
 
 class Member(models.Model):
-    DISTRICT_CHOICES = [
-        ("Anuradhapura", "Anuradhapura"),
-        ("Badulla", "Badulla"),
-        ("Batticaloa", "Batticaloa"),
-        ("Colombo", "Colombo"),
-        ("Digamadulla", "Digamadulla"),
-        ("Galle", "Galle"),
-        ("Gampaha", "Gampaha"),
-        ("Hambantota", "Hambantota"),
-        ("Jaffna", "Jaffna"),
-        ("Kalutara", "Kalutara"),
-        ("Kandy", "Kandy"),
-        ("Kegalle", "Kegalle"),
-        ("Kurunegala", "Kurunegala"),
-        ("Matale", "Matale"),
-        ("Matara", "Matara"),
-        ("Moneragala", "Moneragala"),
-        ("Nuwara Eliya", "Nuwara Eliya"),
-        ("Polonnaruwa", "Polonnaruwa"),
-        ("Puttalam", "Puttalam"),
-        ("Ratnapura", "Ratnapura"),
-        ("Trincomalee", "Trincomalee"),
-        ("Vanni", "Vanni"),
-    ]
     user = models.OneToOneField(
         BaseUser, on_delete=models.CASCADE, related_name="member"
     )
@@ -95,8 +71,8 @@ class Member(models.Model):
         null=True,
         blank=True,
     )
-    district = models.CharField(
-        max_length=100, choices=DISTRICT_CHOICES, null=True, blank=True
+    district = models.ForeignKey(
+        District, on_delete=models.SET_NULL, null=True, blank=True
     )
     constituency = models.CharField(max_length=100, null=True, blank=True)
     image = models.ImageField(upload_to="member_images/", null=True, blank=True)
@@ -107,39 +83,14 @@ class Member(models.Model):
 
 @register_snippet
 class Candidate(models.Model):
-    DISTRICT_CHOICES = [
-        ("Anuradhapura", "Anuradhapura"),
-        ("Badulla", "Badulla"),
-        ("Batticaloa", "Batticaloa"),
-        ("Colombo", "Colombo"),
-        ("Digamadulla", "Digamadulla"),
-        ("Galle", "Galle"),
-        ("Gampaha", "Gampaha"),
-        ("Hambantota", "Hambantota"),
-        ("Jaffna", "Jaffna"),
-        ("Kalutara", "Kalutara"),
-        ("Kandy", "Kandy"),
-        ("Kegalle", "Kegalle"),
-        ("Kurunegala", "Kurunegala"),
-        ("Matale", "Matale"),
-        ("Matara", "Matara"),
-        ("Moneragala", "Moneragala"),
-        ("Nuwara Eliya", "Nuwara Eliya"),
-        ("Polonnaruwa", "Polonnaruwa"),
-        ("Puttalam", "Puttalam"),
-        ("Ratnapura", "Ratnapura"),
-        ("Trincomalee", "Trincomalee"),
-        ("Vanni", "Vanni"),
-    ]
-
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100, null=True, blank=True)
     fathers_name = models.CharField(max_length=100, null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     address = models.CharField(max_length=800, null=True, blank=True)
     party = models.CharField(max_length=100, null=True, blank=True)
-    district = models.CharField(
-        max_length=100, choices=DISTRICT_CHOICES, null=True, blank=True
+    district = models.ForeignKey(
+        District, on_delete=models.SET_NULL, null=True, blank=True
     )
     image = models.ImageField(upload_to="candidate_images/", null=True, blank=True)
     state = models.CharField(max_length=100, null=True, blank=True)
@@ -184,7 +135,7 @@ class Candidate(models.Model):
     ]
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} - Candidate for {self.district}"
+        return f"{self.first_name} {self.last_name} - Candidate for {self.district.name if self.district else 'None'}"
 
     # Need to set up an age function later to get the age directly from date_of_birth
 

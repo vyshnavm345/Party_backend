@@ -42,16 +42,16 @@ class BaseUser(AbstractUser, PermissionsMixin):
         return f"{self.first_name} {self.last_name} {self.email}"
 
 
-# @register_snippet
-# class District(models.Model):
-#     name = models.CharField(max_length=100, unique=True)
+@register_snippet
+class District(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
-#     panels = [
-#         FieldPanel("name"),
-#     ]
+    panels = [
+        FieldPanel("name"),
+    ]
 
-#     def __str__(self):
-#         return self.name
+    def __str__(self):
+        return self.name
 
 
 class Member(models.Model):

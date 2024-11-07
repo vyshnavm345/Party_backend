@@ -1,10 +1,12 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
-from .views import (  # DistrictViewSet; delete_user_by_email_or_phone,
+from .views import (  # delete_user_by_email_or_phone,
     CandidateDetailView,
     CandidateListCreateView,
     DeleteUserView,
     DistrictListView,
+    DistrictViewSet,
     MemberRegistrationView,
     MembersListView,
     NICVerificationView,
@@ -12,8 +14,8 @@ from .views import (  # DistrictViewSet; delete_user_by_email_or_phone,
     OTPVerifyView,
 )
 
-# router = DefaultRouter()
-# router.register(r'districts', DistrictViewSet)
+router = DefaultRouter()
+router.register(r"district", DistrictViewSet)
 
 urlpatterns = [
     path("send-otp/", OTPSendView.as_view(), name="send-otp"),
@@ -29,5 +31,5 @@ urlpatterns = [
     path("districts/", DistrictListView.as_view(), name="district-list"),
     path("members/", MembersListView.as_view(), name="members-list"),
     path("delete_user/", DeleteUserView.as_view(), name="delete_user_by_email"),
-    # path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

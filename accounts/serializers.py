@@ -1,7 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 
-from .models import BaseUser, Candidate, Member
+from .models import BaseUser, Candidate, District, Member
 
 
 class OTPSendSerializer(serializers.Serializer):
@@ -121,7 +121,7 @@ class CandidateSerializer(serializers.ModelSerializer):
         return candidate
 
 
-# class DistrictSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = District
-#         fields = ['id', 'name']
+class DistrictSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = District
+        fields = ["id", "name"]

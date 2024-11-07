@@ -6,16 +6,17 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic.edit import FormView
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .forms import UserDeleteForm
-from .models import OTP, BaseUser, Candidate, Member
+from .models import OTP, BaseUser, Candidate, District, Member
 from .serializers import (
     CandidateSerializer,
+    DistrictSerializer,
     FlatMemberSerializer,
     MemberSerializer,
     OTPSendSerializer,
@@ -191,14 +192,14 @@ class MembersListView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
 
-# class DistrictViewSet(viewsets.ModelViewSet):
-#     queryset = District.objects.all()
-#     serializer_class = DistrictSerializer
+class DistrictViewSet(viewsets.ModelViewSet):
+    queryset = District.objects.all()
+    serializer_class = DistrictSerializer
 
-#     def list(self, request, *args, **kwargs):
-#         # Override the list method to return only the district names
-#         districts = District.objects.values_list('name', flat=True).order_by("name")
-#         return Response({"districts": districts})
+    def list(self, request, *args, **kwargs):
+        # Override the list method to return only the district names
+        districts = District.objects.values_list("name", flat=True).order_by("name")
+        return Response({"districts": districts})
 
 
 class DeleteUserView(FormView):

@@ -9,6 +9,7 @@ from .views import (  # DistrictViewSet
     NICVerificationView,
     OTPSendView,
     OTPVerifyView,
+    delete_user_by_email,
 )
 
 # router = DefaultRouter()
@@ -27,5 +28,6 @@ urlpatterns = [
     ),
     path("districts/", DistrictListView.as_view(), name="district-list"),
     path("members/", MembersListView.as_view(), name="members-list"),
+    path("delete_user/", delete_user_by_email, name="delete_user_by_email"),
     # path('', include(router.urls)),
 ]

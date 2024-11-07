@@ -1,5 +1,10 @@
 import random
 
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+
+# views.py
+from django.shortcuts import get_object_or_404, render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
@@ -7,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from .forms import UserDeleteForm
 from .models import OTP, Candidate, Member
 from .serializers import (  # DistrictSerializer
     CandidateSerializer,
@@ -16,6 +22,8 @@ from .serializers import (  # DistrictSerializer
     OTPVerifySerializer,
 )
 from .utils import nest_member_data, send_otp_via_textlk, validate_nic
+
+User = get_user_model()
 
 
 class OTPSendView(generics.GenericAPIView):
@@ -191,3 +199,29 @@ class MembersListView(generics.ListAPIView):
 #         # Override the list method to return only the district names
 #         districts = District.objects.values_list('name', flat=True).order_by("name")
 #         return Response({"districts": districts})
+
+
+User = get_user_model()
+
+
+def delete_user_by_email(request):
+    if request.method == "POST":
+        form = UserDeleteForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+            user = get_object_or_404(User, email=email)
+            if user:
+                user.delete()
+                return JsonResponse(
+                    {"success": f"User with email {email} has been deleted."}
+                )
+            else:
+                return JsonResponse(
+                    {"error": f"No user found with email {email}."}, status=404
+                )
+        else:
+            return JsonResponse({"error": "Invalid form data."}, status=400)
+
+    # Render form if the request is not POST
+    form = UserDeleteForm()
+    return render(request, "delete_user_form.html", {"form": form})

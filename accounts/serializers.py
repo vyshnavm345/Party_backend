@@ -81,7 +81,15 @@ class FlatMemberSerializer(serializers.ModelSerializer):
         return None
 
 
+class DistrictSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = District
+        fields = ["id", "name"]
+
+
 class CandidateSerializer(serializers.ModelSerializer):
+    district = serializers.SerializerMethodField()
+
     class Meta:
         model = Candidate
         fields = [
@@ -120,8 +128,6 @@ class CandidateSerializer(serializers.ModelSerializer):
         candidate = Candidate.objects.create(**validated_data)
         return candidate
 
-
-class DistrictSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = District
-        fields = ["id", "name"]
+    def get_district(self, obj):
+        # Return the district's name or 'None' if no district is set
+        return obj.district.name if obj.district else "None"

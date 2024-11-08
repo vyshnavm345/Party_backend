@@ -14,6 +14,7 @@ urlpatterns = [
     path("search/", search_views.search, name="search"),
     path("api/", include("accounts.urls")),
     path("news/", include("news.urls")),
+    path("appointments/", include("appointment.urls")),
 ]
 
 

@@ -17,6 +17,6 @@ class CreateAppointmentView(APIView):
         serializer = AppointmentSerializer(data=request.data)
         if serializer.is_valid():
             appointment = serializer.save()
-            send_appointment_email.delay_on_commit(appointment.id)
+            send_appointment_email(appointment.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

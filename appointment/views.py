@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 
 from .models import Appointment
 from .serializers import AppointmentSerializer
-from .utils import send_appointment_email
+from .tasks import send_appointment_email
 
 
 class CreateAppointmentView(APIView):
@@ -17,9 +17,6 @@ class CreateAppointmentView(APIView):
         serializer = AppointmentSerializer(data=request.data)
         if serializer.is_valid():
             appointment = serializer.save()
-            # Useing helper function to send email (replace with Celery task later)
-            # from .tasks import send_appointment_email
-            # send_appointment_email.delay(appointment.id)
-            send_appointment_email(appointment)
+            send_appointment_email.delay_on_commit(appointment.id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

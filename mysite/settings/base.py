@@ -12,6 +12,7 @@ env = environ.Env()
 # Read the .env file
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 INSTALLED_APPS = [
     "home",
@@ -174,13 +175,13 @@ CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS", default="").split(",")
 
 SILKY_PYTHON_PROFILER = True
 
+CELERY_BROKER_URL = "redis://localhost:6379/0"
 
-# Email Configuration
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+EMAIL_BACKEND = env("EMAIL_BACKEND")
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env.int("EMAIL_PORT")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS")
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
-ADMIN_EMAIL = "admin-email@example.com"  # Email to receive notifications

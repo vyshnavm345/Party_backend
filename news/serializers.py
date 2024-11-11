@@ -19,7 +19,7 @@ class NewsSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventsFeed
-        fields = ["id", "description", "image", "date"]
+        fields = ["id", "title", "description", "image", "date"]
 
     def create(self, validated_data):
         return EventsFeed.objects.create(**validated_data)

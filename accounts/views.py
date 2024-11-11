@@ -9,7 +9,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .forms import UserDeleteForm
@@ -22,7 +21,8 @@ from .serializers import (
     OTPSendSerializer,
     OTPVerifySerializer,
 )
-from .utils import nest_member_data, send_otp_via_textlk, validate_nic
+from .tasks import send_otp_via_textlk
+from .utils import nest_member_data, validate_nic
 
 User = get_user_model()
 
@@ -37,7 +37,7 @@ class OTPSendView(generics.GenericAPIView):
         phone_number = serializer.validated_data["phone_number"]
         otp_code = str(random.randint(1000, 9999))
 
-        send_otp_via_textlk(phone_number, otp_code)
+        send_otp_via_textlk.delay(phone_number, otp_code)
 
         OTP.objects.update_or_create(
             phone_number=phone_number, defaults={"otp_code": otp_code}
@@ -153,37 +153,6 @@ class CandidateDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
     permission_classes = [AllowAny]
-
-
-class DistrictListView(APIView):
-    districts = [
-        "Anuradhapura",
-        "Badulla",
-        "Batticaloa",
-        "Colombo",
-        "Digamadulla",
-        "Galle",
-        "Gampaha",
-        "Hambantota",
-        "Jaffna",
-        "Kalutara",
-        "Kandy",
-        "Kegalle",
-        "Kurunegala",
-        "Matale",
-        "Matara",
-        "Moneragala",
-        "Nuwara Eliya",
-        "Polonnaruwa",
-        "Puttalam",
-        "Ratnapura",
-        "Trincomalee",
-        "Vanni",
-    ]
-
-    def get(self, request):
-        response_data = {"districts": self.districts}
-        return Response(response_data)
 
 
 class MembersListView(generics.ListAPIView):

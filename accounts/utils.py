@@ -2,6 +2,8 @@ import re
 
 import requests
 
+from .models import District
+
 
 def send_otp_via_textlk(phone_number, otp):
     url = "https://app.text.lk/api/v3/sms/send"
@@ -24,6 +26,15 @@ def send_otp_via_textlk(phone_number, otp):
 
 
 def nest_member_data(request_data, request_files):
+    print("request_district", request_data.get("district"))
+    district = request_data.get("district")
+    result = District.objects.get(name=district)
+    print("the result : ", result)
+
+    def get_district(self, obj):
+        # Return the district's name or 'None' if no district is set
+        return obj.district.name if obj.district else "None"
+
     return {
         "user": {
             "first_name": request_data.get("first_name"),
@@ -36,7 +47,7 @@ def nest_member_data(request_data, request_files):
         "Nic": request_data.get("Nic"),
         "phone": request_data.get("phone"),
         "gender": request_data.get("gender"),
-        "district": request_data.get("district"),
+        "district": result.id,
         "constituency": request_data.get("constituency"),
         "image": request_files.get("image"),
     }

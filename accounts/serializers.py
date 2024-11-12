@@ -57,6 +57,7 @@ class FlatMemberSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     date_of_birth = serializers.DateField(source="user.date_of_birth", read_only=True)
     image = serializers.SerializerMethodField()  # Use a method to get the image URL
+    district = serializers.SerializerMethodField()
 
     class Meta:
         model = Member
@@ -79,6 +80,10 @@ class FlatMemberSerializer(serializers.ModelSerializer):
         if obj.image:
             return obj.image.url
         return None
+
+    def get_district(self, obj):
+        # Return the district's name or 'None' if no district is set
+        return obj.district.name if obj.district else "None"
 
 
 class DistrictSerializer(serializers.ModelSerializer):

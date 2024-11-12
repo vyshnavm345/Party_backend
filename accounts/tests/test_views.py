@@ -1,13 +1,9 @@
-import os
-
 import pytest
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from accounts.models import OTP, Member
-
-print(os.environ)  # Prints all environment variables
+from accounts.models import OTP, District, Member
 
 
 @pytest.fixture
@@ -103,6 +99,8 @@ class TestOTPViews:
 @pytest.mark.django_db
 class TestMemberRegistration:
     def test_member_registration(self, client, member_data):
+        # Create the required district beforehand
+        District.objects.get_or_create(name="Colombo")
         url = reverse("register")
 
         response = client.post(url, member_data, format="json")
@@ -123,10 +121,12 @@ class TestMemberRegistration:
         assert member is not None
         assert member.user.email == member_data["email"]
         assert member.gender == member_data["gender"]
-        assert member.district == member_data["district"]
+        assert member.district.name == member_data["district"]
         assert member.constituency == member_data["constituency"]
 
     def test_member_registration_existing_phone(self, client, member_data):
+        # Create the required district beforehand
+        District.objects.get_or_create(name="Colombo")
         url = reverse("register")
 
         # Register the member first time
@@ -138,36 +138,3 @@ class TestMemberRegistration:
 
         # Check for duplicate phone number error
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-
-    # def test_member_registration_invalid_nic(self, client, member_data):
-    #     url = reverse("register")
-
-    #     # Test with an invalid NIC
-    #     invalid_nics = [
-    #         "12345678",  # Too short
-    #         "12345678901",  # Too long
-    #         "1234567a89",  # Invalid characters
-    #         "123456789v",  # Invalid ending
-    #         "987654321",  # Valid length but invalid for your case
-    #     ]
-
-    #     for nic in invalid_nics:
-    #         member_data["Nic"] = nic
-    #         response = client.post(url, member_data, format="json")
-    #         assert response.status_code == status.HTTP_400_BAD_REQUEST
-    #         assert response.data["detail"] == "Invalid NIC"
-
-    # def test_member_registration_nic_dob_gender_mismatch(self, client, member_data):
-    #     url = reverse("register")
-
-    #     # Test with a valid NIC but incorrect DOB and gender
-    #     member_data["Nic"] = "123456789"  # Set a NIC that you know is valid
-    #     member_data["date_of_birth"] = "2000-01-01"  # DOB does not match NIC info
-    #     member_data["gender"] = "female"  # Gender does not match NIC info
-
-    #     response = client.post(url, member_data, format="json")
-    #     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    #     assert (
-    #         response.data["reason"] == "Date of birth does not match NIC"
-    #         or response.data["reason"] == "Gender does not match NIC information"
-    #     )

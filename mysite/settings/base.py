@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "silk",
     "appointment",
     "landingPage",
+    "django_cron",
 ]
 
 MIDDLEWARE = [
@@ -190,3 +191,29 @@ EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 TEXTLK_API_URL = env("TEXTLK_API_URL")
 TEXTLK_API_TOKEN = env("TEXTLK_API_TOKEN")
 TEXTLK_SENDER_ID = env("TEXTLK_SENDER_ID")
+
+CRONJOBS = [
+    (
+        "0 0 * * *",
+        "accounts.cron_jobs.DeleteExpiredOTP",
+    )  # Runs every day at midnight (00:00)
+]
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": "cronjob.log",  # Path to your log file
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}

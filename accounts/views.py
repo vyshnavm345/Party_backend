@@ -5,7 +5,6 @@ from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic.edit import FormView
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.renderers import JSONRenderer
@@ -146,9 +145,16 @@ class CandidateListCreateView(generics.ListCreateAPIView):
     queryset = Candidate.objects.all()
     serializer_class = CandidateSerializer
     permission_classes = [AllowAny]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["district__name"]
     renderer_classes = [JSONRenderer]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        district_name = self.request.query_params.get("district", None)
+
+        if district_name:
+            queryset = queryset.filter(district__name__iexact=district_name)
+
+        return queryset
 
 
 class CandidateDetailView(generics.RetrieveUpdateDestroyAPIView):

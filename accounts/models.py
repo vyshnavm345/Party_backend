@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 from wagtail.admin.panels import FieldPanel
@@ -44,7 +45,7 @@ class BaseUser(AbstractUser, PermissionsMixin):
 
 @register_snippet
 class District(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True, db_index=True)
 
     panels = [
         FieldPanel("name"),
@@ -97,7 +98,14 @@ class Candidate(models.Model):
     education = models.CharField(max_length=100, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
-    phone = models.CharField(max_length=15, null=True, blank=True)
+    phone = models.CharField(
+        max_length=15,
+        null=True,
+        blank=True,
+        validators=[
+            RegexValidator(r"^\+?1?\d{9,15}$", message="Enter a valid phone number.")
+        ],
+    )
     biography = models.TextField(null=True, blank=True)
     gender = models.CharField(
         max_length=10,

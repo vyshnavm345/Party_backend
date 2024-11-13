@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.generic.edit import FormView
 from rest_framework import generics, status, viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
@@ -123,22 +124,31 @@ class MemberRegistrationView(generics.CreateAPIView):
         request_data = request.data.copy()
 
         # function for nesting data
-        nested_data = nest_member_data(request_data, request.FILES)
+        try:
+            nested_data = nest_member_data(request_data, request.FILES)
+        except ValidationError as e:
+            # Handle the ValidationError raised by the utility function
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.get_serializer(data=nested_data)
-        serializer.is_valid(raise_exception=True)
-        member = serializer.save()
-        flat_serializer = FlatMemberSerializer(member)
-        refresh = RefreshToken.for_user(member)
 
-        return Response(
-            {
-                **flat_serializer.data,
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-            },
-            status=status.HTTP_201_CREATED,
-        )
+        try:
+            serializer.is_valid(raise_exception=True)
+            member = serializer.save()
+            flat_serializer = FlatMemberSerializer(member)
+            refresh = RefreshToken.for_user(member)
+
+            return Response(
+                {
+                    **flat_serializer.data,
+                    "refresh": str(refresh),
+                    "access": str(refresh.access_token),
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        except ValidationError as e:
+            # Return the validation error message as a response
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CandidateListCreateView(generics.ListCreateAPIView):

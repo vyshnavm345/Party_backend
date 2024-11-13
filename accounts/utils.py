@@ -1,6 +1,7 @@
 import re
 
 import requests
+from rest_framework.exceptions import ValidationError
 
 from .models import District
 
@@ -26,14 +27,16 @@ def send_otp_via_textlk(phone_number, otp):
 
 
 def nest_member_data(request_data, request_files):
-    print("request_district", request_data.get("district"))
-    district = request_data.get("district")
-    result = District.objects.get(name=district)
-    print("the result : ", result)
+    district_name = request_data.get("district")
 
-    def get_district(self, obj):
-        # Return the district's name or 'None' if no district is set
-        return obj.district.name if obj.district else "None"
+    # Attempt to fetch the district, handle exception if not found
+    try:
+        result = District.objects.get(name=district_name)
+        print("The result: ", result)
+    except District.DoesNotExist:
+        print(f"District with name '{district_name}' does not exist.")
+        # Raise a ValidationError so that the view can catch it and return a proper response
+        raise ValidationError({"detail": "District does not exist"})
 
     return {
         "user": {
@@ -47,7 +50,7 @@ def nest_member_data(request_data, request_files):
         "Nic": request_data.get("Nic"),
         "phone": request_data.get("phone"),
         "gender": request_data.get("gender"),
-        "district": result.id,
+        "district": result.id if result else None,
         "constituency": request_data.get("constituency"),
         "image": request_files.get("image"),
     }
@@ -91,8 +94,14 @@ def flatten_candidate_data(request_data):
 
 def validate_nic(user_details):
     nic = str(user_details.get("Nic")).strip()
+
     date_of_birth = user_details.get("date_of_birth")
-    gender = user_details.get("gender").lower()
+    gender = user_details.get("gender")
+
+    if not date_of_birth or not gender:
+        return False, "Missing required fields"
+
+    gender = gender.lower()
 
     if nic.endswith("V") or nic.endswith("v"):
         nic = nic[:-1]

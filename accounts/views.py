@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .forms import UserDeleteForm
-from .models import OTP, BaseUser, Candidate, District, Member
+from .models import OTP, BaseUser, Candidate, District, Member, DeviceToken
 from .serializers import (
     CandidateSerializer,
     DistrictSerializer,
@@ -37,7 +37,7 @@ class OTPSendView(generics.GenericAPIView):
 
         phone_number = serializer.validated_data["phone_number"]
         otp_code = str(random.randint(1000, 9999))
-
+        print(otp_code)
         send_otp_via_textlk(phone_number, otp_code)
 
         OTP.objects.update_or_create(
@@ -56,6 +56,7 @@ class OTPVerifyView(generics.GenericAPIView):
 
         phone_number = serializer.validated_data["phone_number"]
         otp_code = serializer.validated_data["otp_code"]
+        device_token = serializer.validated_data.get("device_token", None)
 
         try:
             otp = OTP.objects.get(phone_number=phone_number)
@@ -65,18 +66,19 @@ class OTPVerifyView(generics.GenericAPIView):
             )
 
         if otp.is_valid() and otp.otp_code == otp_code:
-            # if the user is new proceed to register otherwise create a token and send the user data back
+            otp.delete()
             try:
-                otp.delete()
                 member = Member.objects.get(phone=phone_number)
 
-                # FlatMemberSerializer to serialize the member data
-                flat_serializer = FlatMemberSerializer(member)
+                # Save the device token for existing users
+                if device_token:
+                    DeviceToken.objects.get_or_create(user=member, token=device_token)
 
+                flat_serializer = FlatMemberSerializer(member)
                 refresh = RefreshToken.for_user(member)
                 return Response(
                     {
-                        **flat_serializer.data,  # Include the serialized flattened data
+                        **flat_serializer.data,
                         "refresh": str(refresh),
                         "access": str(refresh.access_token),
                         "existing_user": True,
@@ -84,9 +86,9 @@ class OTPVerifyView(generics.GenericAPIView):
                     status=status.HTTP_200_OK,
                 )
             except Member.DoesNotExist:
-                # If member does not exist, proceed with registration
+                # Return the device token for use during registration
                 return Response(
-                    {"existing_user": False},
+                    {"existing_user": False, "device_token": device_token},
                     status=status.HTTP_200_OK,
                 )
         else:
@@ -123,11 +125,12 @@ class MemberRegistrationView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         request_data = request.data.copy()
 
-        # function for nesting data
+        # Get device token from the request data
+        device_token = request_data.get("device_token", None)
+
         try:
             nested_data = nest_member_data(request_data, request.FILES)
         except ValidationError as e:
-            # Handle the ValidationError raised by the utility function
             return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.get_serializer(data=nested_data)
@@ -135,6 +138,11 @@ class MemberRegistrationView(generics.CreateAPIView):
         try:
             serializer.is_valid(raise_exception=True)
             member = serializer.save()
+
+            # Save the device token if provided
+            if device_token:
+                DeviceToken.objects.get_or_create(user=member, token=device_token)
+
             flat_serializer = FlatMemberSerializer(member)
             refresh = RefreshToken.for_user(member)
 
@@ -147,7 +155,6 @@ class MemberRegistrationView(generics.CreateAPIView):
                 status=status.HTTP_201_CREATED,
             )
         except ValidationError as e:
-            # Return the validation error message as a response
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -222,3 +229,4 @@ class DeleteUserView(FormView):
 
     def form_invalid(self, form):
         return JsonResponse({"error": "Invalid form data."}, status=400)
+

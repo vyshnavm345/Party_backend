@@ -39,14 +39,14 @@ INSTALLED_APPS = [
     "news",
     "rest_framework",
     "corsheaders",
-    "silk",
+    # "silk",
     "appointment",
     "landingPage",
     "django_cron",
 ]
 
 MIDDLEWARE = [
-    "silk.middleware.SilkyMiddleware",
+    # "silk.middleware.SilkyMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -174,7 +174,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS", default="").split(",")
 
-SILKY_PYTHON_PROFILER = True
+# SILKY_PYTHON_PROFILER = True
 
 EMAIL_BACKEND = env("EMAIL_BACKEND")
 EMAIL_HOST = env("EMAIL_HOST")
@@ -215,3 +215,5 @@ LOGGING = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+FIREBASE_CREDENTIALS_PATH = env("FIREBASE_CREDENTIALS_PATH")

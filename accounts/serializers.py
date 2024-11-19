@@ -11,7 +11,8 @@ class OTPSendSerializer(serializers.Serializer):
 class OTPVerifySerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=15)
     otp_code = serializers.CharField(max_length=6)
-
+    device_token = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    
 
 class BaseUserSerializer(serializers.ModelSerializer):
     class Meta:

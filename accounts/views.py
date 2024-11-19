@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .forms import UserDeleteForm
-from .models import OTP, BaseUser, Candidate, District, Member, DeviceToken
+from .models import OTP, BaseUser, Candidate, DeviceToken, District, Member
 from .serializers import (
     CandidateSerializer,
     DistrictSerializer,
@@ -229,4 +229,3 @@ class DeleteUserView(FormView):
 
     def form_invalid(self, form):
         return JsonResponse({"error": "Invalid form data."}, status=400)
-

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import OTP, BaseUser, Candidate, District, Member, DeviceToken
+from .models import OTP, BaseUser, Candidate, DeviceToken, District, Member
 
 admin.site.register(BaseUser)
 admin.site.register(Candidate)

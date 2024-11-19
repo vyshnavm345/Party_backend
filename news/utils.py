@@ -1,12 +1,11 @@
-import firebase_admin
-from firebase_admin import credentials, messaging
-from django.conf import settings
 from pathlib import Path
-from accounts.models import DeviceToken
+
+import firebase_admin
+from django.conf import settings
+from firebase_admin import credentials, messaging
 
 
 def send_push_notification(notification_payload):
-    
     cred_path = settings.FIREBASE_CREDENTIALS_PATH
 
     if not Path(cred_path).exists():
@@ -21,21 +20,25 @@ def send_push_notification(notification_payload):
     batch_size = 500  # FCM allows a maximum of 500 tokens per multicast message
 
     for i in range(0, len(tokens), batch_size):
-        batch_tokens = tokens[i:i + batch_size]
+        batch_tokens = tokens[i : i + batch_size]
         message = messaging.MulticastMessage(
             notification=messaging.Notification(
                 title=notification_payload["title"],
-                body=notification_payload["message"]
+                body=notification_payload["message"],
             ),
-            tokens=batch_tokens
+            tokens=batch_tokens,
         )
-        
+
     response = messaging.send_each_for_multicast(message)
 
     # Log the results
-    print(f"Successfully sent messages: {response.success_count}, failed: {response.failure_count}")
+    print(
+        f"Successfully sent messages: {response.success_count}, failed: {response.failure_count}"
+    )
 
     if response.failure_count > 0:
         for idx, resp in enumerate(response.responses):
             if not resp.success:
-                print(f"Failed to send notification to token: {notification_payload['tokens'][idx]}")
+                print(
+                    f"Failed to send notification to token: {notification_payload['tokens'][idx]}"
+                )

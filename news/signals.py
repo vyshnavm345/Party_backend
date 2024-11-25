@@ -10,7 +10,6 @@ from .utils import send_push_notification
 
 @receiver(post_save, sender=NewsFeed)
 def send_news_notification(sender, instance, created, **kwargs):
-    print("signal received")
     if created:
         # Get all device tokens
         tokens = DeviceToken.objects.values_list("token", flat=True)
@@ -25,13 +24,11 @@ def send_news_notification(sender, instance, created, **kwargs):
                 "title": instance.title,
                 "message": limited_description or "Check out the latest news update!",
             }
-            print("pushing notification to tokens : ", list(tokens))
             send_push_notification(notification_data)
 
 
 @receiver(post_save, sender=EventsFeed)
 def send_events_notification(sender, instance, created, **kwargs):
-    print("signal received")
     if created:
         # Get all device tokens
         tokens = DeviceToken.objects.values_list("token", flat=True)
@@ -45,5 +42,4 @@ def send_events_notification(sender, instance, created, **kwargs):
                 "title": instance.title,
                 "message": limited_description or "Check out the latest news update!",
             }
-            print("pushing notification to tokens : ", list(tokens))
             send_push_notification(notification_data)
